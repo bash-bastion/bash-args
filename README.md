@@ -49,6 +49,14 @@ echo "Args: ${postArgs[*]}"
 
 # Is a string of the initial stdin to 'args'
 echo "$argsSpec"
+
+# Use argsSpec to print an automated help menu
+➤ args_do print-help <<< "$argsSpec"
+Usage:
+    stdin [flags] [<requiredFlags>] <arguments>
+
+Flags:
+    [--number] (default: 3000) - The port to open on
 ```
 
 ### More examples
@@ -67,9 +75,10 @@ EOF
 
 ### Details
 
-CURRENT STATUS: BETA with missing features
+CURRENT STATUS: IN DEVELOPMENT
 
+- TODO: make help menu prettier
 - TODO: support arguments
 - TODO: die with line, but only show line with debug mode
-- environment variables?
-- ensure it works with set -e and set -u
+- TODO: environment variables?
+- TODO: ensure it works with set -e and set -u
