@@ -1,20 +1,21 @@
-# bash-arg
+# args
 
 A cute little Bash library for easy argument parsing in your applications
 
 ## Benefits
 
 - Fast (no subshells, all builtins)
-- Easy API
+- Easy API / sane defaults
+- unobtrusive
 
 ## Installation
 
 ```sh
 # With Basher
-basher install eankeen/bash-arg
+basher install eankeen/args
 
 # or cURL
-curl -O "https://raw.githubusercontent.com/eankeen/bash-arg/main/bash-arg.sh"
+curl -O "https://raw.githubusercontent.com/eankeen/args/main/args.sh"
 ```
 
 ## Usage
@@ -25,21 +26,23 @@ curl -O "https://raw.githubusercontent.com/eankeen/bash-arg/main/bash-arg.sh"
 # Source basher...
 
 # If basher
-source "$(basher package-path eankeen/bash-arg)/bash-arg.sh"
+source "$(basher package-path eankeen/args)/args.sh"
 
 # If cURL
-source "./bash-arg.sh"
+source "./args.sh"
 
 
-# bash-arg stores all its results in the
+# args stores all its results in the
 # 'args' associative array
 declare -A args=()
 
 # Call 'arguments', passinng in the current options.
 # Usually, you would replace '--port 3000' with "$@",
 # in a script, but since we're in an interactive shell
-# session, just specify the arguments manually
-arguments --port 3000 <<-'EOF'
+# session, just specify the arguments manually.
+
+# Pass the definition of your CLI as stdin to 'arguments'
+arguments --port 3005 <<-'EOF'
 @flag [port.p] {3000} - The port to open on
 EOF
 
@@ -56,7 +59,7 @@ https
 ### More examples
 
 ```bash
-source bash-arg.sh
+source ./args.sh
 declare -A args=()
 
 arguments --port 3005 <<-'EOF'
@@ -86,7 +89,17 @@ CURRENT STATUS: ALPHA
 - defaultValue: optional
 - description: optional
 
+Global variables
+
+```sh
+args
+args_raw
+```
+
 TODO
 
 - arg for double hypthen
 - help menu command
+- TODO: die with line, but only show line with debug mode
+- environment variables?
+- ensure it works with set -e and set -u

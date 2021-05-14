@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 set -Eo pipefail
 
-source ../bash-arg.sh
+source ../args.sh
 
 @test "longOption with value" {
 	declare -A args=()
