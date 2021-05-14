@@ -1,13 +1,29 @@
-#!/usr/bin/env bash
+# shellcheck shell=bash
 
-main() {
-	local line
-	while IFS= read -r line; do
-		if [[ -v args_raw ]]; then
-			args_raw+="$line\n"
+source "$ARGS_ROOT_DIR/lib/util/util.sh"
+
+args() {
+	# These are the variables set by args
+	declare argsSpec
+	declare -a postArgs
+	declare -A args
+
+	# generate postArgs
+	local appendMode=no
+	for arg; do
+		if [ "$arg" = "--" ]; then
+			appendMode=yes
 		fi
 
-		echo "LINE: $line"
+		if [ "$appendMode" = yes ]; then
+			postArgs+=("$arg")
+		fi
+	done
+
+
+	local line
+	while IFS= read -r line; do
+		argsSpec+="$line\n"
 
 		local type="${line%% *}"
 		if [ "$type" = "@flag" ]; then
@@ -87,20 +103,23 @@ main() {
 			done
 			local flagValueCli="$arg"
 
-			# If we did not set flagWasFound=yes, it means it did not find
-			# the flag. So, if the flag is <required>, we fail right away
-			if [ -n "$flagNameRequired" ] && [ "$flagWasFound" = no ]; then
-				die "args: You must supply the flag '$currentFlag' with a value"
+			# If the flag name is required, we exit a failure if it's not there
+			if [ -n "$flagNameRequired" ]; then
+				# If we did not set flagWasFound=yes, it means it did not find
+				# the flag. So, if the flag is <required>, we fail right away
+				if [ "$flagWasFound" = no ]; then
+					die "args: You must supply the flag '$currentFlag' with a value"
+				fi
+
+				# If we were supposed to do an immediate break, but didn't actually
+				# do it, it means we are on the last argument and there is no value
+				if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = no ]; then
+					die "args: No value found for flag '$currentFlag'"
+				fi
 			fi
 
-			# If we were supposed to do an immediate break, but didn't actually
-			# do it, it means we are on the last argument and there is no value
-			if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = no ]; then
-				die "args: No value found for flag '$currentFlag'"
-			fi
-
-			# Whether or not the flag was found, we set the default for the current
-			# line, if one exists
+			# Set the default for the current flag. If there is no default,
+			# it is just an empty assignment
 			if [ -n "$longFlag" ]; then
 				args+=(["$longFlag"]="$flagValueDefault")
 			elif [ -n "$shortFlag" ]; then
@@ -109,6 +128,8 @@ main() {
 
 
 			# There is a flag with a possible value
+			# the didImmediateBreak check ensures that the value of "$arg" isn't
+			# the same as the last element (which is the flag option itself)
 			if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = yes ]; then
 				case "$flagValueCli" in
 					-*)
@@ -142,5 +163,3 @@ main() {
 	} >&3
 
 }
-
-main "$@"

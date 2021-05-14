@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-# TODO: make more pOsiX
-DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-source "$DIR/../lib/util.sh"
+source "$ARGS_ROOT_DIR/lib/util/util.sh"
 
-main() {
+do_print_help() {
 	local indent="    "
 	local -a flagArray=() argArray=()
 
@@ -28,6 +26,8 @@ main() {
 			if [ -n "$flagNameOptional" ]; then
 				longFlag="--${flagNameOptional%%.*}"
 				shortFlag="-${flagNameOptional##*.}"
+
+				# TODO: if no long flag was specified, print only short flag
 
 				# tests if a short flag was actually given
 				if [ "$shortFlag" != "-$flagNameOptional" ]; then
@@ -94,5 +94,3 @@ main() {
 	EOF
 
 }
-
-main "$@"

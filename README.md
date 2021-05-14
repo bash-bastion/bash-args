@@ -1,12 +1,12 @@
 # args
 
-A cute little Bash library for easy argument parsing in your applications
+A cute little Bash library for blazing fast argument parsing
 
-## Benefits
+## Summary
 
-- Fast (no subshells, all builtins)
-- Easy API / sane defaults
-- unobtrusive
+- Uses only builtins
+- Uses no subshells
+- Simple API
 
 ## Installation
 
@@ -14,92 +14,62 @@ A cute little Bash library for easy argument parsing in your applications
 # With Basher
 basher install eankeen/args
 
-# or cURL
-curl -O "https://raw.githubusercontent.com/eankeen/args/main/args.sh"
+# With Git
+git clone "https://github.com/eankeen/args" ~/.args
 ```
 
 ## Usage
 
-### Simple
+### Init
+
+Before executing the `args` function, you need to init it first
+
+```sh
+# With Basher
+source "$(basher package-path eankeen/args)/bin/args-init"
+
+# With Git
+source ~/.args/bin/args-init
+```
+
+### Using
 
 ```bash
-# Source basher...
-
-# If basher
-source "$(basher package-path eankeen/args)/args.sh"
-
-# If cURL
-source "./args.sh"
-
-
-# args stores all its results in the
-# 'args' associative array
-declare -A args=()
-
-# Call 'arguments', passinng in the current options.
-# Usually, you would replace '--port 3000' with "$@",
-# in a script, but since we're in an interactive shell
-# session, just specify the arguments manually.
-
-# Pass the definition of your CLI as stdin to 'arguments'
-arguments --port 3005 <<-'EOF'
+# Pass through your command line arguments to 'args'
+# Pass your argument specification through stdin (see more examples below)
+args "$@" <<-'EOF'
 @flag [port.p] {3000} - The port to open on
 EOF
 
-# The above says parse a 'flag' with an *optional* long option of '--port' and a short
-# option of '-p', with a default value of '3000', with the given description.
-# The format is space sensitive and must be on one line.
+# Use the long flags (or short, if you only used short) flags to access the flag value
+echo "Will use port ${args[port]}"
 
-# You can do `<port.p>` to make the option / flag required
+# 'postArgs' array contains everything after the first '--'
+echo "Args: ${postArgs[*]}"
 
-# Then, use the argument
-https
+# Is a string of the initial stdin to 'args'
+echo "$argsSpec"
 ```
 
 ### More examples
 
+The following are all valid lines to specify the shape of the CLI. Of course,
+please don't specify the same flag multiple times
+
 ```bash
-source ./args.sh
-declare -A args=()
-
-arguments --port 3005 <<-'EOF'
-@flag [port.p] {3000} - The port to open on
+args --port 3005 <<-'EOF'
+@flag [port] {3000} - The port to open on (with a default value of 3000)
+@flag [port.p] {3000} - The port to open on (with a default value of 3000)
+@flag [.p] - The port to open on (with no default value)
+@flag <port> - The port to open on (a required option, will exit failure if this isn't passed)
 EOF
-
-echo "${args[port]}" # 3005
-
-arguments --port <<-'EOF'
-@flag [port.p] {3000} - The port to open on
-EOF
-
-# `exit 1` because a supplied flag with a value must have a value
-
-arguments <<-'EOF'
-@flag [port.p] {3000} - The port to open on
-EOF
-echo "${args[port]}" # 3000
 ```
 
 ### Details
 
-CURRENT STATUS: ALPHA
+CURRENT STATUS: BETA with missing features
 
-- pragma: required
-- argName: required
-- defaultValue: optional
-- description: optional
-
-Global variables
-
-```sh
-args
-args_raw
-```
-
-TODO
-
-- arg for double hypthen
-- help menu command
+- TODO: support arguments
 - TODO: die with line, but only show line with debug mode
 - environment variables?
 - ensure it works with set -e and set -u

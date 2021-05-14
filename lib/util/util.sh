@@ -6,7 +6,7 @@ die() {
 }
 
 log_info() {
-	rintf "\033[0;34m%s\033[0m\n" "Info: $*"
+	printf "\033[0;34m%s\033[0m\n" "Info: $*"
 }
 
 log_warn() {
