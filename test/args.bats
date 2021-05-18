@@ -1,12 +1,12 @@
 #!/usr/bin/env bats
 set -Eo pipefail
 
-source ../args.sh
+source ./bin/args-init
 
 @test "longOption with value" {
 	declare -A args=()
 
-	arguments "--port" "3005" <<-'EOF'
+	args.parse "--port" "3005" <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
@@ -18,7 +18,7 @@ source ../args.sh
 @test "shortOption with value" {
 	declare -A args=()
 
-	arguments "-p" "3005" <<-'EOF'
+	args.parse "-p" "3005" <<-'EOF'
 	@flag [.p] {3000} - The port to open on
 	EOF
 
@@ -29,7 +29,7 @@ source ../args.sh
 @test "longOption and shortOption with longOption value" {
 	declare -A args=()
 
-	arguments "--port" "3005" <<-'EOF'
+	args.parse "--port" "3005" <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -42,7 +42,7 @@ source ../args.sh
 @test "longOption and shortOption with shortOption value" {
 	declare -A args=()
 
-	arguments "-p" "3005" <<-'EOF'
+	args.parse "-p" "3005" <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -54,7 +54,7 @@ source ../args.sh
 @test "longOption" {
 	declare -A args=()
 
-	arguments <<-'EOF'
+	args.parse <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
@@ -64,7 +64,7 @@ source ../args.sh
 @test "shortOption" {
 	declare -A args=()
 
-	arguments <<-'EOF'
+	args.parse <<-'EOF'
 	@flag [.p] {3000} - The port to open on
 	EOF
 
@@ -74,7 +74,7 @@ source ../args.sh
 @test "longOption and shortOption" {
 	declare -A args=()
 
-	arguments <<-'EOF'
+	args.parse <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -85,17 +85,19 @@ source ../args.sh
 
 @test "properly fails on not finishing required arguments" {
 	declare -A args=()
+
 	! (
-		arguments --port <<-'EOF'
-		@flag [port] - The port to open on
+		args.parse --port <<-'EOF'
+		@flag <port> - The port to open on
 		EOF
 	)
 }
 
 @test "properly fail if value contains hypthens" {
 	declare -A args=()
+
 	! (
-		arguments --port - <<-'EOF'
+		args.parse --port - <<-'EOF'
 		@flag [port] - The port to open on
 		EOF
 	)
@@ -103,8 +105,9 @@ source ../args.sh
 
 @test "properly fail if required flag not given" {
 	declare -A args=()
+
 	! (
-		arguments <<-'EOF'
+		args.parse <<-'EOF'
 		@flag <port> The port to open on
 		EOF
 	)

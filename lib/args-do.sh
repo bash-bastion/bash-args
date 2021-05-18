@@ -2,7 +2,7 @@
 
 source "$ARGS_ROOT_DIR/lib/do/print-help.sh"
 
-args_do() {
+args.do() {
 	case "$1" in
 		print-help)
 		shift

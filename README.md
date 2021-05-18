@@ -35,9 +35,12 @@ source ~/.args/bin/args-init
 ### Using
 
 ```bash
+# Declaring may be required
+declare -a args
+
 # Pass through your command line arguments to 'args'
 # Pass your argument specification through stdin (see more examples below)
-args "$@" <<-'EOF'
+args.parse "$@" <<-'EOF'
 @flag [port.p] {3000} - The port to open on
 EOF
 
@@ -51,7 +54,7 @@ echo "Args: ${postArgs[*]}"
 echo "$argsSpec"
 
 # Use argsSpec to print an automated help menu
-➤ args_do print-help <<< "$argsSpec"
+➤ args.do print-help <<< "$argsSpec"
 Usage:
     stdin [flags] [<requiredFlags>] <arguments>
 
@@ -66,6 +69,7 @@ please don't specify the same flag multiple times
 
 ```bash
 args --port 3005 <<-'EOF'
+@flag [port] - The port to open on
 @flag [port] {3000} - The port to open on (with a default value of 3000)
 @flag [port.p] {3000} - The port to open on (with a default value of 3000)
 @flag [.p] - The port to open on (with no default value)
@@ -82,3 +86,4 @@ CURRENT STATUS: IN DEVELOPMENT
 - TODO: die with line, but only show line with debug mode
 - TODO: environment variables?
 - TODO: ensure it works with set -e and set -u
+- optimize speed by only looping through args at end and embedding info like within the associative array

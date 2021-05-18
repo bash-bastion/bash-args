@@ -1,13 +1,6 @@
 # shellcheck shell=bash
 
-source "$ARGS_ROOT_DIR/lib/util/util.sh"
-
-args() {
-	# These are the variables set by args
-	declare argsSpec
-	declare -a postArgs
-	declare -A args
-
+args.parse() {
 	# generate postArgs
 	local appendMode=no
 	for arg; do
@@ -40,14 +33,14 @@ args() {
 			if [ "$line" = "$flagValueDefault" ]; then flagValueDefault=; fi
 			if [ "$line" = "$flagDescription" ]; then flagDescription=; fi
 
-			{
-				echo ---
-				echo "    flagNameOptional: $flagNameOptional"
-				echo "    flagNameRequired: $flagNameRequired"
-				echo "    flagValueDefault: $flagValueDefault"
-				echo "    flagDescription: $flagDescription"
-				echo ---
-			} >&3
+			# {
+			# 	echo ---
+			# 	echo "    flagNameOptional: $flagNameOptional"
+			# 	echo "    flagNameRequired: $flagNameRequired"
+			# 	echo "    flagValueDefault: $flagValueDefault"
+			# 	echo "    flagDescription: $flagDescription"
+			# 	echo ---
+			# } >&3
 
 			# Process the flag
 			if [ -z "$flagNameOptional" ] && [ -z "$flagNameRequired" ]; then
@@ -80,11 +73,11 @@ args() {
 				currentFlag="-$shortFlag"
 			fi
 
-			{
-				echo "    longFlag: $longFlag"
-				echo "    shortFlag: $shortFlag"
-				echo ---
-			} >&3
+			# {
+			# 	echo "    longFlag: $longFlag"
+			# 	echo "    shortFlag: $shortFlag"
+			# 	echo ---
+			# } >&3
 
 			# Look for the matching argument, then stay in loop
 			# one extra iteration to get the value of the argument
@@ -151,15 +144,15 @@ args() {
 		fi
 	done
 
-	{
-		echo +++
-		for i in "${!args[@]}"; do
-			echo "key  : $i"
-			echo "value: ${args[$i]}"
-			echo
-		done
-		echo +++
-		echo; echo; echo
-	} >&3
+	# {
+	# 	echo +++
+	# 	for i in "${!args[@]}"; do
+	# 		echo "key  : $i"
+	# 		echo "value: ${args[$i]}"
+	# 		echo
+	# 	done
+	# 	echo +++
+	# 	echo; echo; echo
+	# } >&3
 
 }

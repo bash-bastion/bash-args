@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -Eo pipefail
 
-source ../args.sh
+source ./bin/args-init
 
 @test "append to post postArgs if set" {
 	declare -A postArgs=()
 
-	arguments "--port" "3005" -- one two <<-'EOF'
+	args.parse "--port" "3005" -- one two <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
@@ -16,7 +16,7 @@ source ../args.sh
 }
 
 @test "do not append to post postArgs if not set" {
-	arguments "--port" "3005" -- one two <<-'EOF'
+	args.parse "--port" "3005" -- one two <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
