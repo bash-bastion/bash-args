@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-set -Eo pipefail
+set -Eeuo pipefail
 
 source ./bin/args-init
 

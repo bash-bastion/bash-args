@@ -94,7 +94,7 @@ args.parse() {
 					flagWasFound=yes
 				fi
 			done
-			local flagValueCli="$arg"
+			local flagValueCli="${arg:-}"
 
 			# If the flag name is required, we exit a failure if it's not there
 			if [ -n "$flagNameRequired" ]; then
