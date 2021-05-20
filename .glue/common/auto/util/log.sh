@@ -2,7 +2,7 @@
 
 # Print error, then exit failure code '1' immediately
 die() {
-	log:error "${*-"log.die: Terminate application"}. Exiting"
+	log.error "${*-"log.die: Terminate application"}. Exiting"
 	exit 1
 }
 

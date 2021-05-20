@@ -79,11 +79,8 @@ EOF
 
 ### Details
 
-CURRENT STATUS: IN DEVELOPMENT
+CURRENT STATUS: BETA
 
 - TODO: make help menu prettier
 - TODO: support arguments
-- TODO: die with line, but only show line with debug mode
-- TODO: environment variables?
-- TODO: ensure it works with set -e and set -u
 - optimize speed by only looping through args at end and embedding info like within the associative array

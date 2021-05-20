@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-set -Eeuo pipefail
+set -Eeo pipefail
 
 source ./bin/args-init
 
@@ -46,6 +46,7 @@ source ./bin/args-init
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
+	[[ ${args[p]} == 3005 ]]
 	[[ ${args[port]} == 3005 ]]
 }
 
