@@ -33,6 +33,7 @@ source ./bin/args-init
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
+	[[ ${args[p]} == 3005 ]]
 	[[ ${args[port]} == 3005 ]]
 	[[ ! -v 'args[--port]' ]]
 	[[ ! -v 'args[-port]' ]]
@@ -48,21 +49,24 @@ source ./bin/args-init
 
 	[[ ${args[p]} == 3005 ]]
 	[[ ${args[port]} == 3005 ]]
+	[[ ! -v 'args[--port]' ]]
+	[[ ! -v 'args[-port]' ]]
+	[[ ! -v 'args[-p]' ]]
 }
 
 # # ------------------- without values -------------------
 
-@test "longOption" {
+@test "longOption and default" {
 	declare -A args=()
 
-	args.parse <<-'EOF'
+	args.parse - <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
 	[[ ${args[port]} == 3000 ]]
 }
 
-@test "shortOption" {
+@test "shortOption and default" {
 	declare -A args=()
 
 	args.parse <<-'EOF'
@@ -80,6 +84,7 @@ source ./bin/args-init
 	EOF
 
 	[[ ${args[port]} == 3000 ]]
+	[[ ${args[p]} == 3000 ]]
 }
 
 # -------- ensure failure on invalid conditions --------
@@ -88,7 +93,7 @@ source ./bin/args-init
 	declare -A args=()
 
 	! (
-		args.parse --port <<-'EOF'
+		args.parse --port --something nother <<-'EOF'
 		@flag <port> - The port to open on
 		EOF
 	)
