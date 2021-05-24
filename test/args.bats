@@ -99,10 +99,10 @@ source ./bin/args-init
 	)
 }
 
-@test "properly fails on not finishing required arguments excluding boolean" {
+@test "properly doesn't fails on not finishing required boolean arguments" {
 	declare -A args=()
 
-	! ! (
+	(
 		args.parse --port --something nother <<-'EOF'
 		@flag <port> - The port to open on
 		EOF
@@ -119,10 +119,10 @@ source ./bin/args-init
 	)
 }
 
-@test "properly fail if value contains hypthens excluding boolean" {
+@test "properly does not fail if hyphen on boolean flag" {
 	declare -A args=()
 
-	! ! (
+	(
 		args.parse --port - <<-'EOF'
 		@flag [port] - The port to open on
 		EOF

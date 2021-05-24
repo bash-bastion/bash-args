@@ -29,3 +29,18 @@ source ./bin/args-init
 	[[ "${argsCommands[0]}" = serve ]]
 	[[ "${argsCommands[1]}" = now ]]
 }
+
+@test "argsCommands works with boolean flags" {
+	declare -A args
+	declare -a argsCommands=()
+
+	args.parse --port 3005 serve now --enable-security last <<-'EOF'
+	@flag [port.p] {3000} - The port to open on
+	@flag [enable-security] - Whether to enable security
+	EOF
+
+	[[ "${#argsCommands[@]}" = 3 ]]
+	[[ "${argsCommands[0]}" = serve ]]
+	[[ "${argsCommands[1]}" = now ]]
+	[[ "${argsCommands[2]}" = last ]]
+}

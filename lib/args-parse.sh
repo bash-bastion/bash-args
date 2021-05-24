@@ -13,8 +13,8 @@ args.parse() {
 		fi
 	done
 
-	# Array contaning all flags that should _not_ expect a value after
-	local argsCommandBooleanFlags=()
+	# Array contaning all flags that should _not_ expect subsequent value
+	local -a argsCommandBooleanFlags=()
 	local line
 	while IFS= read -r line; do
 		argsRawSpec+="$line"$'\n'
@@ -56,7 +56,7 @@ args.parse() {
 			if [ "$flagName" = "$shortFlag" ]; then shortFlag=; fi
 
 			# Add to argsCommandBooleanFlags if applicable
-			if [[ -v flagValueDefault ]]; then
+			if [[ ! -v flagValueDefault ]]; then
 				if [ -n "$longFlag" ]; then
 					argsCommandBooleanFlags+=("$longFlag")
 				fi
@@ -178,11 +178,14 @@ args.parse() {
 
 		case "$arg" in
 			-*)
-				# We only skip the next argument if the current argument is NOT a
-				# boolean argument
+				# We only skip the next argument if the current
+				# argument is NOT a boolean argument
 				local shouldSkip=yes
-				for booleanArgs in "${argsCommandBooleanFlags[@]}"; do
-					if [ "$booleanArgs" = "$arg" ]; then
+				for booleanArg in "${argsCommandBooleanFlags[@]}"; do
+					local cutArg="${arg/#-/}"
+					cutArg="${cutArg/#-/}"
+
+					if [ "$booleanArg" = "$cutArg" ]; then
 						shouldSkip=no
 						break
 					fi

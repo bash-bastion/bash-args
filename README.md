@@ -67,27 +67,27 @@ Flags:
 
 The following are valid lines and their explanations to pass as stdin to `args.parse`
 
-- `@flag [verbose] - Enable verbose logging`
+#### `@flag [verbose] - Enable verbose logging`
 
 `verbose` is a boolean flag. Any argument succeeding it will not be interpreted as a value to the flag
 
-- `@flag [port] {} - Port to open on`
+#### `@flag [port] {} - Port to open on`
 
 `port` is _not_ a boolean flag. You must specify a value if you decide to pass it to the command line. By default, it will be empty
 
-- `@flag [port] {3000} - Port to open on`
+#### `@flag [port] {3000} - Port to open on`
 
 Same as previous, but the default value is `3000`
 
-- `@flag [port.p] {3000} - Port to open on`
+#### `@flag [port.p] {3000} - Port to open on`
 
 Same as previous, but you can also specify the value with `-p`. Note that the `port` _and_ `p` properties will be properly populated in the `args` associate array
 
-- `@flag [.p] {3000} - Port to open on`
+#### `@flag [.p] {3000} - Port to open on`
 
 Same as previous before previous, but only specify the short argument
 
-- `@flag <port.p> - Port to open on`
+#### `@flag <port.p> - Port to open on`
 
 Specify a non-boolean flag, `port`, and require that it's value _must_ be specified with either `-p` or `--port`. This makes the `{3000}` redundant and unecessary. Of course, you can use the sideways carrots with other variants
 
