@@ -7,6 +7,10 @@ args.util.die() {
 		args.util.log_error "Exiting"
 	fi
 
+	if [[ -v PS1 || $- = *i* ]]; then
+		return 1
+	fi
+
 	exit 1
 }
 

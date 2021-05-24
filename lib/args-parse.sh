@@ -40,10 +40,12 @@ args.parse() {
 			# Sanity checks
 			if [ -z "$flagNameOptional" ] && [ -z "$flagNameRequired" ]; then
 				args.util.die 'args.parse: Must specify either an optional or required flag; neither were specified'
+				return
 			fi
 
 			if [ -n "$flagNameOptional" ] && [ -n "$flagNameRequired" ]; then
 				args.util.die 'args.parse: Must specify either an optional or required flag; both were specified'
+				return
 			fi
 
 			# Set flagName, which always has a value unlike
@@ -62,7 +64,6 @@ args.parse() {
 				if [ -n "$shortFlag" ]; then
 					argsCommandBooleanFlags+=("$shortFlag")
 				fi
-
 			fi
 
 			# shellcheck disable=SC1007
@@ -93,12 +94,14 @@ args.parse() {
 				# the flag. So, if the flag is <required>, we fail right away
 				if [ "$flagWasFound" = no ]; then
 					args.util.die "args.parse: You must supply the flag '$currentFlag' with a value"
+					return
 				fi
 
 				# If we were supposed to do an immediate break, but didn't actually
 				# do it, it means we are on the last argument and there is no value
 				if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = no ]; then
 					args.util.die "args.parse: No value found for flag '$currentFlag'"
+					return
 				fi
 			fi
 
@@ -131,6 +134,7 @@ args.parse() {
 					-*)
 						if [[ -v flagValueDefault ]]; then
 							args.util.die "args.parse: You must supply a value for '$currentFlag'"
+							return
 						fi
 						;;
 					*)
@@ -158,6 +162,7 @@ args.parse() {
 			:
 		else
 			args.util.die "args.parse: Pragma must be either @flag or @arg"
+			return
 		fi
 	done
 

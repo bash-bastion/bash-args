@@ -40,7 +40,7 @@ declare -a args
 
 # Pass through your command line arguments to 'args'
 # Pass your argument specification through stdin (see more examples below)
-args.parse "$@" <<-'EOF'
+args.parse "$@" <<-"EOF"
 @flag [port.p] {3000} - The port to open on
 EOF
 
@@ -90,7 +90,6 @@ Same as previous before previous, but only specify the short argument
 - `@flag <port.p> - Port to open on`
 
 Specify a non-boolean flag, `port`, and require that it's value _must_ be specified with either `-p` or `--port`. This makes the `{3000}` redundant and unecessary. Of course, you can use the sideways carrots with other variants
-```
 
 ### Common Issues
 
