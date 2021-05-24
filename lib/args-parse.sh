@@ -282,6 +282,8 @@ args.parse() {
 	# use argsAllFlags to ensure no invalid arguments
 	for arg; do
 		case "$arg" in
+		-) ;;
+		--) break ;;
 		-*)
 			local isValidFlag=no
 			for flag in "${argsAllFlags[@]}"; do
@@ -292,11 +294,10 @@ args.parse() {
 			done
 
 			if [ "$isValidFlag" = no ]; then
-				die "args.parse: Flag '$arg' is not accepted"
+				args.util.die "args.parse: Flag '$arg' is not accepted"
 				return
 			fi
 		esac
-
 	done
 
 	# generate argsHelpText
@@ -307,7 +308,7 @@ args.parse() {
 
 	# TODO: description can wrap around incorrectly
 	local descriptionOutput=
-	if [ -n "$description" ]; then
+	if [ -n "${description:-}" ]; then
 		printf -v descriptionOutput "\nDescription:\n"
 	fi
 
@@ -322,6 +323,7 @@ args.parse() {
 		fi
 	fi
 
+	argumentOutput=
 	if [ "${#argsHelpArrayArgs[@]}" -gt 0 ]; then
 		printf -v argumentOutput "\nArguments:\n%s" "${argsHelpArrayArgs[*]}"
 	fi

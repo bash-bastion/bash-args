@@ -8,5 +8,5 @@ unset -v _args_readlink
 ARGS_ROOT_DIR="${ARGS_ROOT_DIR%/*}"
 ARGS_ROOT_DIR="${ARGS_ROOT_DIR%/*}"
 
-source "$ARGS_ROOT_DIR/lib/args-parse.sh"
 source "$ARGS_ROOT_DIR/lib/util/util.sh"
+source "$ARGS_ROOT_DIR/lib/args-parse.sh"

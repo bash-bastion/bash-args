@@ -59,7 +59,7 @@ source ./bin/args-init
 @test "longOption and default" {
 	declare -A args=()
 
-	args.parse - <<-'EOF'
+	args.parse <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
@@ -105,6 +105,7 @@ source ./bin/args-init
 	(
 		args.parse --port --something nother <<-'EOF'
 		@flag <port> - The port to open on
+		@flag <something> - something
 		EOF
 	)
 }

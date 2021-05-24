@@ -21,8 +21,10 @@ source ./bin/args-init
 	declare -A args
 	declare -a argsCommands=()
 
-	args.parse --port 3005 serve --user admin now --enable-security <<-'EOF'
+	args.parse --port 3005 serve --user admin --enable-security now <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
+	@flag [user] {} - User
+	@flag [enable-security] - Enable security
 	EOF
 
 	[[ "${#argsCommands[@]}" = 2 ]]
