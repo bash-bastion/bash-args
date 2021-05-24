@@ -15,7 +15,7 @@ args.parse() {
 
 	local line
 	while IFS= read -r line; do
-		argsRawSpec+="$line\n"
+		argsRawSpec+="$line"$'\n'
 
 		local type="${line%% *}"
 		if [ "$type" = "@flag" ]; then
