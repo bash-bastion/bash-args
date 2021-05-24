@@ -35,7 +35,7 @@ source ~/.args/bin/args-init
 ### Using
 
 ```bash
-# Declaring may be required
+# Declaring `args` may be required
 declare -a args
 
 # Pass through your command line arguments to 'args'
@@ -44,14 +44,15 @@ args.parse "$@" <<-'EOF'
 @flag [port.p] {3000} - The port to open on
 EOF
 
-# Use the long flags (or short, if you only used short) flags to access the flag value
-echo "Will use port ${args[port]}"
+# Use either the long or short flags to get value
+echo "Using port '${args[port]}'"
 
-# 'postArgs' array contains everything after the first '--'
-echo "Args: ${postArgs[*]}"
+# 'argsCommands' contains all commands (arguments that are not
+# either flags or values for flags)
+echo "argsCommands: ${argsCommands[*]}"
 
-# Is a string of the initial stdin to 'args'
-echo "$argsSpec"
+# 'argsPostHyphen' contains everything after the first '--'
+echo "argsPostHyphen: ${argsPostHyphen[*]}"
 
 # Use argsSpec to print an automated help menu
 ➤ args.do print-help <<< "$argsSpec"
@@ -62,19 +63,33 @@ Flags:
     [--number] (default: 3000) - The port to open on
 ```
 
-### More examples
+### Argument Specification
 
-The following are all valid lines to specify the shape of the CLI. Of course,
-please don't specify the same flag multiple times
+The following are valid lines and their explanations to pass as stdin to `args.parse`
 
-```bash
-args --port 3005 <<-'EOF'
-@flag [port] - The port to open on
-@flag [port] {3000} - The port to open on (with a default value of 3000)
-@flag [port.p] {3000} - The port to open on (with a default value of 3000)
-@flag [.p] - The port to open on (with no default value)
-@flag <port> - The port to open on (a required option, will exit failure if this isn't passed)
-EOF
+- `@flag [verbose] - Enable verbose logging`
+
+`verbose` is a boolean flag. Any argument succeeding it will not be interpreted as a value to the flag
+
+- `@flag [port] {} - Port to open on`
+
+`port` is _not_ a boolean flag. You must specify a value if you decide to pass it to the command line. By default, it will be empty
+
+- `@flag [port] {3000} - Port to open on`
+
+Same as previous, but the default value is `3000`
+
+- `@flag [port.p] {3000} - Port to open on`
+
+Same as previous, but you can also specify the value with `-p`. Note that the `port` _and_ `p` properties will be properly populated in the `args` associate array
+
+- `@flag [.p] {3000} - Port to open on`
+
+Same as previous before previous, but only specify the short argument
+
+- `@flag <port.p> - Port to open on`
+
+Specify a non-boolean flag, `port`, and require that it's value _must_ be specified with either `-p` or `--port`. This makes the `{3000}` redundant and unecessary. Of course, you can use the sideways carrots with other variants
 ```
 
 ### Common Issues
@@ -87,6 +102,4 @@ CURRENT STATUS: BETA
 
 - fix help menu
 - die if unknown flag passed
-- Handle flags without values
 - TODO: make help menu prettier
-- optimize speed by only looping through args at end and embedding info like within the associative array
