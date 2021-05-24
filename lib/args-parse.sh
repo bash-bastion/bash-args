@@ -32,11 +32,11 @@ args.parse() {
 
 			# Sanity checks
 			if [ -z "$flagNameOptional" ] && [ -z "$flagNameRequired" ]; then
-				die 'args: Must specify either an optional or required flag; neither were specified'
+				die 'args.parse: Must specify either an optional or required flag; neither were specified'
 			fi
 
 			if [ -n "$flagNameOptional" ] && [ -n "$flagNameRequired" ]; then
-				die 'args: Must specify either an optional or required flag; both were specified'
+				die 'args.parse: Must specify either an optional or required flag; both were specified'
 			fi
 
 			# Set flagName, which always has a value unlike
@@ -73,13 +73,13 @@ args.parse() {
 				# If we did not set flagWasFound=yes, it means it did not find
 				# the flag. So, if the flag is <required>, we fail right away
 				if [ "$flagWasFound" = no ]; then
-					die "args: You must supply the flag '$currentFlag' with a value"
+					die "args.parse: You must supply the flag '$currentFlag' with a value"
 				fi
 
 				# If we were supposed to do an immediate break, but didn't actually
 				# do it, it means we are on the last argument and there is no value
 				if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = no ]; then
-					die "args: No value found for flag '$currentFlag'"
+					die "args.parse: No value found for flag '$currentFlag'"
 				fi
 			fi
 
@@ -99,7 +99,7 @@ args.parse() {
 			if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = yes ]; then
 				case "$flagValueCli" in
 					-*)
-						die "args: You must supply a value for '$currentFlag'"
+						die "args.parse: You must supply a value for '$currentFlag'"
 						;;
 					*)
 						# The user-supplied flag is valid, override the default
@@ -115,19 +115,7 @@ args.parse() {
 		elif [ "$type" = "@arg" ]; then
 			:
 		else
-			die "args: Pragma must be either @flag or @arg"
+			die "args.parse: Pragma must be either @flag or @arg"
 		fi
 	done
-
-	# {
-	# 	echo +++
-	# 	for i in "${!args[@]}"; do
-	# 		echo "key  : $i"
-	# 		echo "value: ${args[$i]}"
-	# 		echo
-	# 	done
-	# 	echo +++
-	# 	echo; echo; echo
-	# } >&3
-
 }

@@ -41,7 +41,7 @@ echo "$argsRawSpec"
 An associative array that contains the values of arguments
 
 ```sh
-declare -a args=()
+declare -A args=()
 
 args.parse --port 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
