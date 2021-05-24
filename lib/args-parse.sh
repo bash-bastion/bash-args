@@ -22,7 +22,8 @@ args.parse() {
 	# Array containing all flags for help menu
 	local -a argsHelpArrayFlags=()
 
-	# Args longest flagNameCombo
+	# Array containing all flags
+	local -a argsAllFlags=()
 
 	local line
 	while IFS= read -r line; do
@@ -77,6 +78,15 @@ args.parse() {
 				if [ -n "$shortFlag" ]; then
 					argsCommandBooleanFlags+=("$shortFlag")
 				fi
+			fi
+
+			# Add to argsAllFlags
+			if [ -n "$longFlag" ]; then
+					argsAllFlags+=("--$longFlag")
+			fi
+
+			if [ -n "$shortFlag" ]; then
+				argsAllFlags+=("-$shortFlag")
 			fi
 
 			local currentFlag=
@@ -267,6 +277,26 @@ args.parse() {
 					argsCommands+=("$arg")
 				fi
 		esac
+	done
+
+	# use argsAllFlags to ensure no invalid arguments
+	for arg; do
+		case "$arg" in
+		-*)
+			local isValidFlag=no
+			for flag in "${argsAllFlags[@]}"; do
+				if [ "$flag" = "$arg" ]; then
+					isValidFlag=yes
+					break
+				fi
+			done
+
+			if [ "$isValidFlag" = no ]; then
+				die "args.parse: Flag '$arg' is not accepted"
+				return
+			fi
+		esac
+
 	done
 
 	# generate argsHelpText

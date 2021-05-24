@@ -64,7 +64,7 @@ The following are valid lines and their explanations to pass as stdin to `args.p
 
 #### `@flag [verbose] - Enable verbose logging`
 
-`verbose` is a boolean flag. Any argument succeeding it will not be interpreted as a value to the flag
+`verbose` is a boolean flag. Any argument succeeding it will not be interpreted as a value to the flag. In the `args` associative array, the value is `yes` if the flag is supplied, and `no` if otherwise
 
 #### `@flag [port] {} - Port to open on`
 
@@ -95,6 +95,5 @@ Not setting `args` with `set -u`
 
 CURRENT STATUS: BETA
 
-- fix help menu
 - die if unknown flag passed
 - name the type of a value of a flag (ex. dir, jobs, regex, etc.)
