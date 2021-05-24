@@ -77,10 +77,16 @@ args --port 3005 <<-'EOF'
 EOF
 ```
 
+### Common Issues
+
+Not setting `args` with `set -u`
+
 ### Details
 
 CURRENT STATUS: BETA
 
+- fix help menu
+- die if unknown flag passed
+- Handle flags without values
 - TODO: make help menu prettier
-- TODO: support arguments
 - optimize speed by only looping through args at end and embedding info like within the associative array

@@ -94,6 +94,16 @@ source ./bin/args-init
 
 	! (
 		args.parse --port --something nother <<-'EOF'
+		@flag <port> {} - The port to open on
+		EOF
+	)
+}
+
+@test "properly fails on not finishing required arguments excluding boolean" {
+	declare -A args=()
+
+	! ! (
+		args.parse --port --something nother <<-'EOF'
 		@flag <port> - The port to open on
 		EOF
 	)
@@ -103,6 +113,16 @@ source ./bin/args-init
 	declare -A args=()
 
 	! (
+		args.parse --port - <<-'EOF'
+		@flag [port] {} - The port to open on
+		EOF
+	)
+}
+
+@test "properly fail if value contains hypthens excluding boolean" {
+	declare -A args=()
+
+	! ! (
 		args.parse --port - <<-'EOF'
 		@flag [port] - The port to open on
 		EOF

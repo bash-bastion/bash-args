@@ -13,6 +13,8 @@ args.parse() {
 		fi
 	done
 
+	# Array contaning all flags that should _not_ expect a value after
+	local argsCommandBooleanFlags=()
 	local line
 	while IFS= read -r line; do
 		argsRawSpec+="$line"$'\n'
@@ -27,7 +29,12 @@ args.parse() {
 			local flagDescription="${line##* -}"
 			if [ "$line" = "$flagNameOptional" ]; then flagNameOptional=; fi
 			if [ "$line" = "$flagNameRequired" ]; then flagNameRequired=; fi
-			if [ "$line" = "$flagValueDefault" ]; then flagValueDefault=; fi
+			if [ "$line" = "$flagValueDefault" ]; then
+				# The flag does not expect a value qualifier. To differentiate
+				# @from passing in '{}' (a flag that defaults to empty), the
+				# variable is unset
+				unset flagValueDefault
+			fi
 			if [ "$line" = "$flagDescription" ]; then flagDescription=; fi
 
 			# Sanity checks
@@ -46,8 +53,20 @@ args.parse() {
 			local shortFlag="${flagName##*.}"
 			if [ "$flagName" = "$shortFlag" ]; then shortFlag=; fi
 
-			local currentFlag=
-			local arg= flagWasFound=no didImmediateBreak=no
+			# Add to argsCommandBooleanFlags if applicable
+			if [[ -v flagValueDefault ]]; then
+				if [ -n "$longFlag" ]; then
+					argsCommandBooleanFlags+=("$longFlag")
+				fi
+
+				if [ -n "$shortFlag" ]; then
+					argsCommandBooleanFlags+=("$shortFlag")
+				fi
+
+			fi
+
+			# shellcheck disable=SC1007
+			local arg= currentFlag= flagWasFound=no didImmediateBreak=no
 			for arg; do
 				if [ "$arg" = "--" ]; then
 					break
@@ -84,13 +103,24 @@ args.parse() {
 			fi
 
 			# Set the default for the current flag. If there is no default,
-			# it is just an empty assignment
-			if [ -n "$longFlag" ]; then
-				args+=(["$longFlag"]="$flagValueDefault")
-			fi
+			# it is just an empty assignment. If flagValueDefault is unset,
+			# it means the flag is a boolean so we set the default to 'no'
+			if [[ -v flagValueDefault ]]; then
+				if [ -n "$longFlag" ]; then
+					args+=(["$longFlag"]="${flagValueDefault:-}")
+				fi
 
-			if [ -n "$shortFlag" ]; then
-				args+=(["$shortFlag"]="$flagValueDefault")
+				if [ -n "$shortFlag" ]; then
+					args+=(["$shortFlag"]="${flagValueDefault:-}")
+				fi
+			else
+				if [ -n "$longFlag" ]; then
+					args+=(["$longFlag"]=no)
+				fi
+
+				if [ -n "$shortFlag" ]; then
+					args+=(["$shortFlag"]=no)
+				fi
 			fi
 
 			# There is a flag with a possible value
@@ -99,16 +129,28 @@ args.parse() {
 			if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = yes ]; then
 				case "$flagValueCli" in
 					-*)
-						args.util.die "args.parse: You must supply a value for '$currentFlag'"
+						if [[ -v flagValueDefault ]]; then
+							args.util.die "args.parse: You must supply a value for '$currentFlag'"
+						fi
 						;;
 					*)
 						# The user-supplied flag is valid, override the default
-						if [ -n "$longFlag" ]; then
-							args+=(["$longFlag"]="$arg")
-						fi
+						if [[ -v flagValueDefault ]]; then
+							if [ -n "$longFlag" ]; then
+								args+=(["$longFlag"]="$arg")
+							fi
 
-						if [ -n "$shortFlag" ]; then
-							args+=(["$shortFlag"]="$arg")
+							if [ -n "$shortFlag" ]; then
+								args+=(["$shortFlag"]="$arg")
+							fi
+						else
+							if [ -n "$longFlag" ]; then
+								args+=(["$longFlag"]=yes)
+							fi
+
+							if [ -n "$shortFlag" ]; then
+								args+=(["$shortFlag"]=yes)
+							fi
 						fi
 				esac
 			fi
@@ -117,5 +159,38 @@ args.parse() {
 		else
 			args.util.die "args.parse: Pragma must be either @flag or @arg"
 		fi
+	done
+
+	# generate argsCommands
+	# note that so long as we check and exit on flags that
+	# are not recognized, this should provide accurate results
+	local argsCommandMode=append
+	for arg; do
+		if [ "$argsCommandMode" = skip ]; then
+			argsCommandMode=append
+			continue
+		fi
+
+		case "$arg" in
+			-*)
+				# We only skip the next argument if the current argument is NOT a
+				# boolean argument
+				local shouldSkip=yes
+				for booleanArgs in "${argsCommandBooleanFlags[@]}"; do
+					if [ "$booleanArgs" = "$arg" ]; then
+						shouldSkip=no
+						break
+					fi
+				done
+
+				if [ "$shouldSkip" = yes ]; then
+					argsCommandMode=skip
+				fi
+				;;
+			*)
+				if [ "$argsCommandMode" = append ]; then
+					argsCommands+=("$arg")
+				fi
+		esac
 	done
 }

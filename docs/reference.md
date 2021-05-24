@@ -58,17 +58,17 @@ echo "${args[port]} ${args[p]}"
 # 3005 3005
 ```
 
-### `argsCmd`
+### `argsCommands`
 
 An array contaning all the commands supplied
 
 ```sh
-declare -a argsCmd=()
+declare -a argsCommands=()
 
 args.parse --port 3005 serve --user admin now --enable-security <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
-echo "${argsCmd[*]}"
+echo "${argsCommands[*]}"
 # serve now
 ```
