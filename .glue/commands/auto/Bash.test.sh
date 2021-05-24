@@ -6,8 +6,12 @@ bootstrap || exit
 util.get_action 'do-tool-bats.sh'
 source "$REPLY"
 
-# glue useAction(do-tool-shellharden.sh)
-util.get_action 'do-tool-shellharden.sh'
+# glue useAction(do-tool-shellcheck.sh)
+util.get_action 'do-tool-shellcheck.sh'
 source "$REPLY"
+
+# glue useAction(do-tool-shellharden.sh)
+# util.get_action 'do-tool-shellharden.sh'
+# source "$REPLY"
 
 unbootstrap

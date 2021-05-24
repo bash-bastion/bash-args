@@ -3,14 +3,14 @@
 bootstrap.init() {
 	set -Eo pipefail
 
-	trap sigint INT
-	sigint() {
+	trap 'bootstrap.init.int' INT
+	bootstrap.init.int() {
 		die 'Received SIGINT'
 	}
 
 	_original_wd="$PWD"
-	trap exitTrap EXIT
-	exitTrap() {
+	trap 'bootstrap.init.exit' EXIT
+	bootstrap.init.exit() {
 		# shellcheck disable=SC2164
 		cd "$_original_wd"
 	}

@@ -35,11 +35,11 @@ util.get_file() {
 # Pass '-q' as the first arg to set the result to
 # '$REPLY' rather than outputing to standard output
 util.get_action() {
-	if [ "$1" = "-q" ]; then
+	if [ "$1" = "-p" ]; then
 		util.get_file "actions" "$2"
+		printf "%s\n" "$REPLY"
 	else
 		util.get_file "actions" "$1"
-		printf "%s\n" "$REPLY"
 	fi
 }
 
@@ -47,11 +47,11 @@ util.get_action() {
 # Pass '-q' as the first arg to set the result to
 # '$REPLY' rather than outputing to standard output
 util.get_command() {
-	if [ "$1" = "-q" ]; then
+	if [ "$1" = "-p" ]; then
 		util.get_file "commands" "$2"
+		printf "%s\n" "$REPLY"
 	else
 		util.get_file "commands" "$1"
-		printf "%s\n" "$REPLY"
 	fi
 }
 
@@ -59,11 +59,11 @@ util.get_command() {
 # Pass '-q' as the first arg to set the result to
 # '$REPLY' rather than outputing to standard output
 util.get_config() {
-	if [ "$1" = "-q" ]; then
+	if [ "$1" = "-p" ]; then
 		util.get_file "configs" "$2"
+		printf "%s\n" "$REPLY"
 	else
 		util.get_file "configs" "$1"
-		printf "%s\n" "$REPLY"
 	fi
 }
 
