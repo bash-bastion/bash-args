@@ -32,11 +32,11 @@ args.parse() {
 
 			# Sanity checks
 			if [ -z "$flagNameOptional" ] && [ -z "$flagNameRequired" ]; then
-				die 'args.parse: Must specify either an optional or required flag; neither were specified'
+				args.util.die 'args.parse: Must specify either an optional or required flag; neither were specified'
 			fi
 
 			if [ -n "$flagNameOptional" ] && [ -n "$flagNameRequired" ]; then
-				die 'args.parse: Must specify either an optional or required flag; both were specified'
+				args.util.die 'args.parse: Must specify either an optional or required flag; both were specified'
 			fi
 
 			# Set flagName, which always has a value unlike
@@ -73,13 +73,13 @@ args.parse() {
 				# If we did not set flagWasFound=yes, it means it did not find
 				# the flag. So, if the flag is <required>, we fail right away
 				if [ "$flagWasFound" = no ]; then
-					die "args.parse: You must supply the flag '$currentFlag' with a value"
+					args.util.die "args.parse: You must supply the flag '$currentFlag' with a value"
 				fi
 
 				# If we were supposed to do an immediate break, but didn't actually
 				# do it, it means we are on the last argument and there is no value
 				if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = no ]; then
-					die "args.parse: No value found for flag '$currentFlag'"
+					args.util.die "args.parse: No value found for flag '$currentFlag'"
 				fi
 			fi
 
@@ -99,7 +99,7 @@ args.parse() {
 			if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = yes ]; then
 				case "$flagValueCli" in
 					-*)
-						die "args.parse: You must supply a value for '$currentFlag'"
+						args.util.die "args.parse: You must supply a value for '$currentFlag'"
 						;;
 					*)
 						# The user-supplied flag is valid, override the default
@@ -115,7 +115,7 @@ args.parse() {
 		elif [ "$type" = "@arg" ]; then
 			:
 		else
-			die "args.parse: Pragma must be either @flag or @arg"
+			args.util.die "args.parse: Pragma must be either @flag or @arg"
 		fi
 	done
 }
