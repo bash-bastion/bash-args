@@ -15,9 +15,22 @@ args.parse() {
 
 	# Array contaning all flags that should _not_ expect subsequent value
 	local -a argsCommandBooleanFlags=()
+
+	# Array containing all arguments for help menu
+	local -a argsHelpArrayArgs=()
+
+	# Array containing all flags for help menu
+	local -a argsHelpArrayFlags=()
+
+	# Args longest flagNameCombo
+
 	local line
 	while IFS= read -r line; do
 		argsRawSpec+="$line"$'\n'
+
+		if [ -z "$line" ]; then
+			continue
+		fi
 
 		local type="${line%% *}"
 		if [ "$type" = "@flag" ]; then
@@ -66,8 +79,17 @@ args.parse() {
 				fi
 			fi
 
+			local currentFlag=
+			if [[ -n "$longFlag" && -n "$shortFlag" ]]; then
+				currentFlag="--$longFlag or -$shortFlag"
+			elif [ -n "$longFlag" ]; then
+				currentFlag="--$longFlag"
+			elif [ -n "$shortFlag" ]; then
+				currentFlag="-$shortFlag"
+			fi
+
 			# shellcheck disable=SC1007
-			local arg= currentFlag= flagWasFound=no didImmediateBreak=no
+			local arg= flagWasFound=no didImmediateBreak=no
 			for arg; do
 				if [ "$arg" = "--" ]; then
 					break
@@ -79,10 +101,8 @@ args.parse() {
 				fi
 
 				if [ "$arg" = "--$longFlag" ]; then
-					currentFlag="--$longFlag"
 					flagWasFound=yes
 				elif [ "$arg" = "-$shortFlag" ]; then
-					currentFlag="-$shortFlag"
 					flagWasFound=yes
 				fi
 			done
@@ -158,10 +178,57 @@ args.parse() {
 						fi
 				esac
 			fi
+
+			# for argsHelpText
+
+			# shellcheck disable=SC1007
+			local flagNameCombo= flagDescription=
+
+			# Option
+			if [[ -n "$longFlag" && -n "$shortFlag" ]]; then
+				flagNameCombo="$shortFlag, $longFlag"
+			elif [ -n "$shortFlag" ]; then
+				flagNameCombo="$shortFlag"
+			elif [ -n "$longFlag" ]; then
+				flagNameCombo="$longFlag"
+			fi
+
+			if [ -n "$flagNameRequired" ]; then
+				# flagNameCombo="$flagNameCombo <>"
+
+				if [ -n "$flagDescription" ]; then
+					flagDescription="(Required) $flagDescription"
+				else
+					flagDescription="(Required)"
+				fi
+			fi
+
+			if [[ -v flagValueDefault ]]; then
+				if [ -n "$flagDescription" ]; then
+					flagDescription="(Default: $flagValueDefault) $flagDescription"
+				else
+					flagDescription="(Default: $flagValueDefault)"
+				fi
+			fi
+
+			# TODO: description can wrap around incorrectly
+			flagNameCombo="  ${flagNameCombo}"
+			if [ "${#flagNameCombo}" -lt 20 ]; then
+				printf -v flagNameCombo '%-20s' "$flagNameCombo"
+				argsHelpArrayFlags+=("${flagNameCombo}$flagDescription"$'\n')
+			else
+				argsHelpArrayFlags+=("${flagNameCombo}\n$flagDescription"$'\n')
+			fi
+
 		elif [ "$type" = "@arg" ]; then
-			:
+			local name="${line#* }"; name="${name%% *}"
+			local argDescription="${line##* - }"
+
+			# for argsHelpText
+			printf -v name '%-20s' "  $name"
+			argsHelpArrayArgs+=("${name}${argDescription}"$'\n')
 		else
-			args.util.die "args.parse: Pragma must be either @flag or @arg"
+			args.util.die "args.parse: Pragma must be either @flag or @arg. Received: '$type'"
 			return
 		fi
 	done
@@ -201,4 +268,39 @@ args.parse() {
 				fi
 		esac
 	done
+
+	# generate argsHelpText
+	execName="${0##*/}"
+	echo "$execName"
+	if [ "$execName" = "bash" ]; then
+		execName="stdin"
+	fi
+
+	# TODO: description can wrap around incorrectly
+	local descriptionOutput=
+	if [ -n "$description" ]; then
+		printf -v descriptionOutput "\nDescription:\n"
+	fi
+
+	oldIFS="$IFS"
+	IFS=
+	if [ "${#argsHelpArrayFlags[@]}" -gt 0 ]; then
+		printf -v flagOutput "\nFlags:\n%s" "${argsHelpArrayFlags[*]}"
+
+		# Since flagOutput is the last thing to print, strip any hanging newlines
+		if [ "${flagOutput: -1}" = $'\n' ]; then
+			flagOutput="${flagOutput::-1}"
+		fi
+	fi
+
+	if [ "${#argsHelpArrayArgs[@]}" -gt 0 ]; then
+		printf -v argumentOutput "\nArguments:\n%s" "${argsHelpArrayArgs[*]}"
+	fi
+
+	IFS="$oldIFS"
+
+	# shellcheck disable=SC2034
+	argsHelpText="Usage:
+  $execName [flags] <arguments>
+${descriptionOutput}${argumentOutput}${flagOutput}"
 }

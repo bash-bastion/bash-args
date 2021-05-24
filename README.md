@@ -54,13 +54,8 @@ echo "argsCommands: ${argsCommands[*]}"
 # 'argsPostHyphen' contains everything after the first '--'
 echo "argsPostHyphen: ${argsPostHyphen[*]}"
 
-# Use argsSpec to print an automated help menu
-➤ args.do print-help <<< "$argsSpec"
-Usage:
-    stdin [flags] [<requiredFlags>] <arguments>
-
-Flags:
-    [--number] (default: 3000) - The port to open on
+# Print the help text
+echo "argsHelpText: $argsHelpText"
 ```
 
 ### Argument Specification
@@ -81,7 +76,7 @@ Same as previous, but the default value is `3000`
 
 #### `@flag [port.p] {3000} - Port to open on`
 
-Same as previous, but you can also specify the value with `-p`. Note that the `port` _and_ `p` properties will be properly populated in the `args` associate array
+Same as previous, but you can also specify the value with `-p`. Note that both `port` _and_ `p` properties will be properly populated in the `args` associative array
 
 #### `@flag [.p] {3000} - Port to open on`
 
@@ -89,10 +84,11 @@ Same as previous before previous, but only specify the short argument
 
 #### `@flag <port.p> - Port to open on`
 
-Specify a non-boolean flag, `port`, and require that it's value _must_ be specified with either `-p` or `--port`. This makes the `{3000}` redundant and unecessary. Of course, you can use the sideways carrots with other variants
+Specify a non-boolean flag, `port`, and require that it's value _must_ be specified with either `-p` or `--port`. Of course, you can use the sideways carrot notation with other variants
 
 ### Common Issues
 
+- TODO
 Not setting `args` with `set -u`
 
 ### Details
@@ -101,4 +97,4 @@ CURRENT STATUS: BETA
 
 - fix help menu
 - die if unknown flag passed
-- TODO: make help menu prettier
+- name the type of a value of a flag (ex. dir, jobs, regex, etc.)
