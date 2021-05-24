@@ -301,7 +301,6 @@ args.parse() {
 
 	# generate argsHelpText
 	execName="${0##*/}"
-	echo "$execName"
 	if [ "$execName" = "bash" ]; then
 		execName="stdin"
 	fi
