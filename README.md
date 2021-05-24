@@ -86,14 +86,6 @@ Same as previous before previous, but only specify the short argument
 
 Specify a non-boolean flag, `port`, and require that it's value _must_ be specified with either `-p` or `--port`. Of course, you can use the sideways carrot notation with other variants
 
-### Common Issues
+#### `@arg build - Build project`
 
-- TODO
-Not setting `args` with `set -u`
-
-### Details
-
-CURRENT STATUS: BETA
-
-- die if unknown flag passed
-- name the type of a value of a flag (ex. dir, jobs, regex, etc.)
+Specify a valid argument, or command called 'build' with a description
