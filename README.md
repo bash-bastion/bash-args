@@ -7,6 +7,7 @@ A cute little Bash library for blazing fast argument parsing
 - Uses only builtins
 - Uses no subshells
 - Simple API
+- More featureful than [opts.bash](https://github.com/reconquest/opts.bash) and cleaner / easier to use than [bash_option_parser](https://github.com/MihirLuthra/bash_option_parser), [longoption](https://github.com/team-lab/longoption) and more recent than [easyoptions](https://github.com/renatosilva/easyoptions)
 
 ## Installation
 

@@ -72,3 +72,7 @@ EOF
 echo "${argsCommands[*]}"
 # serve now
 ```
+
+### `argsHelpText`
+
+The full generated help text

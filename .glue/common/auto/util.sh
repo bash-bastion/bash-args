@@ -68,12 +68,12 @@ util.get_config() {
 }
 
 util.ln_config() {
-	ensure.args 'util.ln_config' "$@"
+	ensure.args 'util.ln_config' '1 2' "$@"
 
 	if [ -f "$GLUE_WD/.glue/configs/$1" ]; then
-		ln -sfT ".glue/configs/$1" "$GLUE_WD/$1"
+		ln -sfT ".glue/configs/$1" "${2:-"$GLUE_WD/$1"}"
 	elif [ -f "$GLUE_WD/.glue/configs/auto/$1" ]; then
-		ln -sfT ".glue/configs/auto/$1" "$GLUE_WD/$1"
+		ln -sfT ".glue/configs/auto/$1" "${2:-"$GLUE_WD/$1"}"
 	else
 		error.file_not_found_in_dot_glue_dir "$1" 'configs'
 	fi
@@ -82,7 +82,8 @@ util.ln_config() {
 # Set or unset a shopt parameter, which will be reversed
 # during the bootstrap.deinit phase
 util.shopt() {
-	ensure.args 'util.shopt' "$@"
+	ensure.args 'util.shopt' '1 2' "$@"
 
+	shopt "$1" "$2"
 	_util_shopt_data+="$1.$2 "
 }

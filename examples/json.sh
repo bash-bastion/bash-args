@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# https://github.com/p8952/bocker
+# https://github.com/dominictarr/JSON.sh
 
 source ./bin/args-init
 

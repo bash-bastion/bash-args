@@ -5,7 +5,8 @@
 # useful tips (beacuset this error will be bound to crop up)
 error.file_not_found_in_dot_glue_dir() {
 	log.error "Could not find '$1' in '.glue/$2' or '.glue/auto/$2'"
-	echo "    -> Did you spell the filename in the file annotation 'requireAction(...)' properly?"
+	echo "    -> Did you spell the filename or dirname correctly when using annotations like 'useAction(...)'?"
+	echo "    -> Did you spell the filename or dirname correctly when using functions like 'util.get_config' or 'util.ln_config'?"
 	exit 1
 }
 
