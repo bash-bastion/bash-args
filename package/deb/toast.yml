@@ -1,0 +1,24 @@
+image: debian
+default: main
+tasks:
+  bootstrap:
+    command: |
+      set -Eeuo pipefail
+      apt-get update -y
+      DEBIAN_FRONTEND=noninteractive apt-get install -y sudo vim expect
+      # TODO: not working with image:ubuntu when NOT on tty
+      # unbuffer -p expect -c 'if {[ catch { close stdin; open /dev/tty; } err ]} { puts stderr $err; exit 1; }; spawn unminimize; expect -- "*"; send -- "y\n"; expect -- "*"; send -- "y\n"; interact'
+
+  init:
+    dependencies: [ bootstrap ]
+    command: |
+      DEBIAN_FRONTEND=noninteractive apt-get install -y sudo devscripts debhelper dh-make
+      useradd -m op -s /bin/bash -G sudo
+      chpasswd <<< 'op:password'
+
+  main:
+    dependencies: [ init ]
+    cache: false
+    user: op
+    mount_paths:
+      - .

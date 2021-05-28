@@ -1,0 +1,22 @@
+image: fedora
+default: main
+tasks:
+  bootstrap:
+    command: |
+      set -Eeuo pipefail
+      dnf -y install vim man-db
+
+  init:
+    dependencies: [ bootstrap ]
+    command: |
+      set -Eeuo pipefail
+      dnf -y install fedora-packager fedora-review wget
+      useradd -m op -s /bin/bash -G wheel
+      chpasswd <<< 'op:password'
+
+  main:
+    dependencies: [ init ]
+    cache: false
+    user: op
+    mount_paths:
+      - .
