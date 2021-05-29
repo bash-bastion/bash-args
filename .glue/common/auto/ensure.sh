@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 ensure.cmd() {
-	if ! command -v "$1" &>/dev/null; then
-		die "Command '$1' not found"
+	local cmd="$1"
+
+	if ! command -v "$cmd" &>/dev/null; then
+		die "Command '$cmd' not found"
 	fi
 }
 
@@ -24,10 +26,26 @@ ensure.args() {
 }
 
 ensure.nonZero() {
-	varName="$1"
-	varValue="$2"
+	local varName="$1"
+	local varValue="$2"
 
 	if [ -z "$varValue" ]; then
 		die "ensure.nonZero: Variable '$varName' must be non zero"
+	fi
+}
+
+ensure.file() {
+	local fileName="$1"
+
+	if [ ! -f "$fileName" ]; then
+		die "ensure.file: File '$fileName' does not exist"
+	fi
+}
+
+ensure.dir() {
+	local dirName="$1"
+
+	if [ ! -f "$dirName" ]; then
+		die "ensure.file: File '$dirName' does not exist"
 	fi
 }
