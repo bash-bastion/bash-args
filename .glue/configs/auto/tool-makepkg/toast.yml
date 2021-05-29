@@ -5,8 +5,10 @@ tasks:
     command: |
       set -Eeuo pipefail
       pacman -Syu --noconfirm base-devel sudo man-db expect
-      sed -ie 's/# %sudo/%sudo/g' /etc/sudoers
+
       groupadd sudo
+      sed -ie 's/# %sudo/%sudo/g' /etc/sudoers
+
       useradd -m op -s /bin/bash -G sudo
       chpasswd <<< 'op:password'
 
@@ -18,4 +20,5 @@ tasks:
       - .
     command: |
       set -Eeuo pipefail
-      ./run2.sh
+      sudo -S -v <<< $'password\n'
+      source makepkg -Ccfi --noconfirm

@@ -14,5 +14,9 @@ sed -i -e "s|\(PROGRAM_VERSION=\"\).*\(\"\)|\1${newVersion}\2|g" glue.sh || :
 util.get_action 'util-release-post.sh'
 source "$REPLY" "$newVersion"
 
+# glue useAction(tool-makepkg.sh)
+util.get_action 'tool-makepkg.sh'
+source "$REPLY"
+
 unset newVersion
 unbootstrap

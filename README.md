@@ -21,27 +21,13 @@ git clone "https://github.com/eankeen/args" ~/.args
 
 ## Usage
 
-### Init
-
-Before executing the `args` function, you need to init it first
-
-```sh
-# With Basher
-source "$(basher package-path eankeen/args)/bin/args-init"
-
-# With Git
-source ~/.args/bin/args-init
-```
-
-### Using
-
 ```bash
 # Declaring `args` may be required
 declare -a args
 
 # Pass through your command line arguments to 'args'
 # Pass your argument specification through stdin (see more examples below)
-args.parse "$@" <<-"EOF"
+source args.parse "$@" <<-"EOF"
 @flag [port.p] {3000} - The port to open on
 EOF
 

@@ -26,17 +26,17 @@ main() {
 
 	local -a args=()
 	if [ -f CHANGELOG.md ]; then
-		args+=("--notes-file" "CHANGELOG.md")
+		args+=("-F" "CHANGELOG.md")
 	elif [ -f changelog.md ]; then
-		args+=("--notes-file" "changelog.md")
+		args+=("-F" "changelog.md")
 	else
-		log.warn 'CHANGELOG.md file not found. Not creating a notes file for release'
+		# '-F' is required for non-interactivity
+		args+=("-F" "")
+		log.warn 'CHANGELOG.md file not found. Creating empty notes file for release'
 	fi
 
 	# Remote Release
-	toml.get_key name glue.toml
-	local projectName="${REPLY:-Release}"
-	gh release create "v$newVersion" --target main --title "$projectName v$newVersion" "${args[@]}"
+	gh release create "v$newVersion" --target main --title "v$newVersion" "${args[@]}"
 }
 
 main "$@"

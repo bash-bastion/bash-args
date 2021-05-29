@@ -11,7 +11,7 @@ error.file_not_found_in_dot_glue_dir() {
 }
 
 error.cd_failed() {
-	die "Some 'cd' failed"
+	die "A 'cd' failed"
 }
 
 error.not_supported() {

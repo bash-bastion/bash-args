@@ -1,4 +1,4 @@
-# reference.md
+# API Reference
 
 ## Variables
 
@@ -11,7 +11,7 @@ An array that contains every argument or flag after the first `--`
 ```sh
 declare -a argsPostHyphen=()
 
-args.parse --port 3005 -- ls -L --color=always /lib <<-'EOF'
+source args.parse --port 3005 -- ls -L --color=always /lib <<-'EOF'
 	@flag [port] {3000} - The port to open on
 EOF
 
@@ -26,7 +26,7 @@ A string that is a copy of standard input to `args.parse`
 ```sh
 declare argsRawSpec=
 
-args.parse --port 3005 <<-'EOF'
+source args.parse --port 3005 <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	@flag [version.v] - Prints program version
 EOF
@@ -43,14 +43,14 @@ An associative array that contains the values of arguments
 ```sh
 declare -A args=()
 
-args.parse --port 3005 <<-'EOF'
+source args.parse --port 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
 echo "${args[port]} ${args[p]}"
 # 3005 3005
 
-args.parse -p 3005 <<-'EOF'
+source args.parse -p 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
@@ -65,7 +65,7 @@ An array contaning all the commands supplied
 ```sh
 declare -a argsCommands=()
 
-args.parse --port 3005 serve --user admin now --enable-security <<-'EOF'
+source args.parse --port 3005 serve --user admin now --enable-security <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
@@ -76,3 +76,5 @@ echo "${argsCommands[*]}"
 ### `argsHelpText`
 
 The full generated help text
+
+// TODO

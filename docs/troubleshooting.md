@@ -15,6 +15,10 @@ declare -a args
 declare -A args
 ```
 
+## Not sourcing `args.parse`
+
+// TODO
+
 ## Not declaring variables
 
 TODO: test this

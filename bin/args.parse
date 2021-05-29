@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # https://github.com/bashup/realpaths
-realpath.location(){ realpath.follow "$1"; realpath.absolute "$REPLY" ".."; }
+realpath.location() { realpath.follow "$1"; realpath.absolute "$REPLY" ".."; }
 realpath.dirname() { REPLY=.; ! [[ $1 =~ /+[^/]+/*$|^//$ ]] || REPLY="${1%${BASH_REMATCH[0]}}"; REPLY=${REPLY:-/}; }
 realpath.follow() {
 	local target
@@ -29,13 +29,14 @@ realpath.absolute() {
 }
 
 
-
+# Get the path to the 'lib' directory, which could
+# be different depending on if the user installed
+# this software via their distribution's package manager
+# or is using through Git like Basher
 realpath.location "${BASH_SOURCE[0]}"
 if [ -d "$REPLY"/../lib/bash-args ]; then
-	# distribution: linux distribution
 	ARGS_LIB_DIR="$REPLY/../lib/bash-args"
 elif [ -d "$REPLY"/../lib ]; then
-	# distribution channel: git / basher
 	ARGS_LIB_DIR="$REPLY/../lib"
 else
 	echo "Error: Could not determine \$ARGS_LIB_DIR"
