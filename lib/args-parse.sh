@@ -331,7 +331,9 @@ args.parse() {
 	IFS="$oldIFS"
 
 	# shellcheck disable=SC2034
-	argsHelpText="Usage:
+	declare -g argsHelpText="Usage:
   $execName [flags] <arguments>
 ${descriptionOutput}${argumentOutput}${flagOutput}"
 }
+
+args.parse "$@"

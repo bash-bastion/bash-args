@@ -1,12 +1,10 @@
 #!/usr/bin/env bats
 set -Eeuo pipefail
 
-source ./bin/args-init
-
 @test "longOption with value" {
 	declare -A args=()
 
-	args.parse "--port" "3005" <<-'EOF'
+	source ./bin/args.parse --port 3005 <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
@@ -18,7 +16,7 @@ source ./bin/args-init
 @test "shortOption with value" {
 	declare -A args=()
 
-	args.parse "-p" "3005" <<-'EOF'
+	source ./bin/args.parse -p 3005 <<-'EOF'
 	@flag [.p] {3000} - The port to open on
 	EOF
 
@@ -29,7 +27,7 @@ source ./bin/args-init
 @test "longOption and shortOption with longOption value" {
 	declare -A args=()
 
-	args.parse "--port" "3005" <<-'EOF'
+	source ./bin/args.parse --port 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -43,7 +41,7 @@ source ./bin/args-init
 @test "longOption and shortOption with shortOption value" {
 	declare -A args=()
 
-	args.parse "-p" "3005" <<-'EOF'
+	source ./bin/args.parse -p 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -59,7 +57,7 @@ source ./bin/args-init
 @test "longOption and default" {
 	declare -A args=()
 
-	args.parse <<-'EOF'
+	source ./bin/args.parse <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
@@ -69,7 +67,7 @@ source ./bin/args-init
 @test "shortOption and default" {
 	declare -A args=()
 
-	args.parse <<-'EOF'
+	source ./bin/args.parse <<-'EOF'
 	@flag [.p] {3000} - The port to open on
 	EOF
 
@@ -79,7 +77,7 @@ source ./bin/args-init
 @test "longOption and shortOption" {
 	declare -A args=()
 
-	args.parse <<-'EOF'
+	source ./bin/args.parse <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -93,7 +91,7 @@ source ./bin/args-init
 	declare -A args=()
 
 	! (
-		args.parse --port --something nother <<-'EOF'
+		source ./bin/args.parse --port --something nother <<-'EOF'
 		@flag <port> {} - The port to open on
 		EOF
 	)
@@ -103,7 +101,7 @@ source ./bin/args-init
 	declare -A args=()
 
 	(
-		args.parse --port --something nother <<-'EOF'
+		source ./bin/args.parse --port --something nother <<-'EOF'
 		@flag <port> - The port to open on
 		@flag <something> - something
 		EOF
@@ -114,7 +112,7 @@ source ./bin/args-init
 	declare -A args=()
 
 	! (
-		args.parse --port - <<-'EOF'
+		source ./bin/args.parse --port - <<-'EOF'
 		@flag [port] {} - The port to open on
 		EOF
 	)
@@ -124,7 +122,7 @@ source ./bin/args-init
 	declare -A args=()
 
 	(
-		args.parse --port - <<-'EOF'
+		source ./bin/args.parse --port - <<-'EOF'
 		@flag [port] - The port to open on
 		EOF
 	)
@@ -134,7 +132,7 @@ source ./bin/args-init
 	declare -A args=()
 
 	! (
-		args.parse <<-'EOF'
+		source ./bin/args.parse <<-'EOF'
 		@flag <port> The port to open on
 		EOF
 	)

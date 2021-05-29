@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-source ./bin/args-init
-
 @test "append to post argsPostHyphen if set" {
 	declare -A args=()
 	declare -a argsPostHyphen=()
 
-	args.parse "--port" "3005" -- one two <<-'EOF'
+	source ./bin/args.parse "--port" "3005" -- one two <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 

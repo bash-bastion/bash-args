@@ -1,0 +1,21 @@
+image: archlinux
+default: main
+tasks:
+  init:
+    command: |
+      set -Eeuo pipefail
+      pacman -Syu --noconfirm base-devel sudo man-db expect
+      sed -ie 's/# %sudo/%sudo/g' /etc/sudoers
+      groupadd sudo
+      useradd -m op -s /bin/bash -G sudo
+      chpasswd <<< 'op:password'
+
+  main:
+    dependencies: [ init ]
+    cache: false
+    user: op
+    mount_paths:
+      - .
+    command: |
+      set -Eeuo pipefail
+      ./run2.sh
