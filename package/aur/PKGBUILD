@@ -1,6 +1,6 @@
 # Maintainer: Edwin Kofler <edwin@kofler.dev>
 pkgname='bash-args'
-pkgver='0.5.0'
+pkgver='0.6.0'
 pkgrel='1'
 pkgdesc='A cute little Bash library for blazing fast argument parsing'
 arch=('any')
@@ -8,7 +8,7 @@ url="https://github.com/eankeen/bash-args"
 license=('unknown')
 depends=(bash)
 source=($pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz)
-sha256sums=('144ae369fa414500ad806a27b28a557cd085fbceb207c98d69373f95955304c5')
+sha256sums=('3e2054c9df7009580059ad2663e2b7064b770644043c01dfab614f72f3d96c0b')
 
 _mainfolder=$_name-$pkgver
 
@@ -29,6 +29,7 @@ package() {
 
 	install -d "$pkgdir"/usr/{bin,lib/bash-args/util}
 	install -m755 bin/* "$pkgdir/usr/bin"
+	cp lib/args-parse.sh "$pkgdir/usr/lib/bash-args"
 	install -m755 lib/util/* "$pkgdir/usr/lib/bash-args/util"
 	# install -m644 lib/util/* "$pkgdir/lib/bash-args/util"
 }
