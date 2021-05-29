@@ -2,9 +2,7 @@
 
 # https://github.com/bats-core/bats-core
 
-source ./bin/args-init
-
-args.parse -- <<"EOF"
+source args.parse -- <<"EOF"
 @flag [count.c] - Count test cases without running any tests
 @flag [filter.f] {} - Only run tests that match the regular expression
 @flag [formatter.F] {pretty} - Swithc between formatters: pretty (default), tap (default w/o term), tap13, junit
