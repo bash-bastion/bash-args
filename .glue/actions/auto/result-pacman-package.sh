@@ -13,7 +13,6 @@ main() {
 	ensure.file glue.toml
 	ensure.file glue-auto.toml
 
-
 	# TODO: use function
 	mkdir -p .glue/generated/tool-makepkg
 
@@ -27,14 +26,18 @@ main() {
 
 	toml.get_key version glue-auto.toml
 	local myVer="$REPLY"
+	myVer="${myVer/-/_}"
 
+	ensure.nonZero 'myVer' "$myVer"
 	# glue useConfig(tool-makepkg)
 	util.get_config "tool-makepkg/dev/PKGBUILD"
 	pkgbuildFile="$REPLY"
+
+	generated.in 'result-pacman-package'
 	(
-		cd .glue/generated/tool-makepkg || error.cd_failed
-		# TODO: should this be handled by library function (remove generated subfolder)?
-		rm -f PKGBUILD
+		mkdir -p .glue/generated/tool-makepkg/dev
+		cd .glue/generated/tool-makepkg/dev || error.cd_failed
+
 		cp "$pkgbuildFile" .
 
 		# TODO: bash templating
@@ -56,10 +59,9 @@ main() {
 		sum="${sum%% *}"
 		sed -i -e "s/sha256sums=.*\$/sha256sums=\('$sum'\)/g" PKGBUILD
 
-
 		makepkg -Cfsrc
-	)
-
+	) || exit
+	generated.out
 
 	# TODO: think about more fine grained linting control in the whole SDLC
 	# namcap PKGBUILD

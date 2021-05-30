@@ -1,5 +1,7 @@
 # shellcheck shell=bash
 
+source "$ARGS_LIB_DIR/util/util.sh"
+
 args.parse() {
 	# generate argsPostHyphen
 	local appendMode=no
