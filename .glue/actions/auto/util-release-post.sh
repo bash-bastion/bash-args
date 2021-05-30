@@ -7,7 +7,9 @@
 
 unset main
 main() {
-	local newVersion="$1"
+	local -r dryStatus="$1"
+	local newVersion="$2"
+
 	ensure.nonZero 'newVersion' "$newVersion"
 
 	ensure.cmd 'git'
