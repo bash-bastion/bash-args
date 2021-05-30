@@ -2,40 +2,24 @@
 eval "$GLUE_BOOTSTRAP"
 bootstrap || exit
 
-dirty=
-if [ -n "$(git status --porcelain)" ]; then
-	dirty=yes
+declare cmdName="$1"
+ensure.nonZero 'cmdName' "$cmdName"
+shift
+
+if [ -d pkg ]; then
+	cd pkg || error.cd_failed
 fi
 
-if version="$(git describe --match 'v*' --abbrev=0 2>/dev/null)"; then
-	version="${version/#v/}"
+declare execPath="$PWD/bin/$cmdName"
+if [ -f "$execPath" ]; then
+	if [ -x "$execPath" ]; then
+		"$execPath" "$@"
+	else
+		error.not_executable "$execPath"
+	fi
 else
-	version="0.0.0"
+	echo "Executable file '$execPath' not found"
 fi
 
-id="$(git rev-parse --short HEAD)"
-version+="+$id${dirty:+-DIRTY}"
-
-sed -i -e "s|\(version=\"\).*\(\"\)|\1${version}\2|g" glue.toml
-
-# TODO: exec project
-
-# if [ -f Taskfile.yml ]; then
-# 	if command -v go-task &>/dev/null; then
-# 		go-task run "$@"
-# 	elif command -v task &>/dev/null; then
-# 		if ! task help | grep -q Taskwarrior; then
-# 			task run "$@"
-# 		else
-# 			ensure.cmd 'go-task'
-# 		fi
-# 	else
-# 		ensure.cmd 'go-task'
-# 	fi
-# elif [ -f Justfile ]; then
-# 	ensure.cmd 'just'
-
-# 	just run "$@"
-# fi
 
 unbootstrap

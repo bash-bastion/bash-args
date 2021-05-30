@@ -7,8 +7,12 @@ util.get_action 'util-release-pre.sh'
 source "$REPLY" 'dry'
 newVersion="$REPLY"
 
-# TODO: generalize
-sed -i -e "s|\(PROGRAM_VERSION=\"\).*\(\"\)|\1${newVersion}\2|g" glue.sh || :
+# Bash version bump
+(
+	find . -ignore_readdir_race -regex '\./pkg/.*\.\(sh\|bash\)' -print0 \
+		| xargs -r0 \
+		sed -i -e "s|\(PROGRAM_VERSION=\"\).*\(\"\)|\1${newVersion}\2|g" || :
+) || exit
 
 # glue useAction(util-release-post.sh)
 util.get_action 'util-release-post.sh'

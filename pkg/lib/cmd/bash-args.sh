@@ -2,17 +2,11 @@
 
 source "$ARGS_LIB_DIR/util/util.sh"
 
-declare -r PROGRAM_VERSION="0.5.0"
+declare -r PROGRAM_VERSION="0.6.2+a151090-DIRTY"
 
 bash-args-main() {
 	local flag="${1:-}"
 
-	# Cannot use 'args.parse' because it assumes it has been
-	# installed to PATH. It may not, in the case of development
-	# Additionally, if the consumer wishes to pre-source the
-	# files and use 'args.parse' as a function (as opposed to a
-	# 'args.parse' file source), we don't want to use 'args.parse'
-	# for speed reasons (double invocation) (TODO: update docs)
 	if [ "$flag" = --version ]; then
 		bash-args-show-version
 	elif [ "$flag" = --help ]; then

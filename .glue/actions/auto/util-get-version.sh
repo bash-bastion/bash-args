@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
 
+unset main
 main() {
 	# If the working tree is dirty and there are unstaged changes
 	# for both tracked and untracked files
@@ -24,4 +23,4 @@ main() {
 }
 
 main "$@"
-unbootstrap
+unset main

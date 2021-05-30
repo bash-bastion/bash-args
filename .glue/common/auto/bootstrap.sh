@@ -109,11 +109,20 @@ unbootstrap() {
 
 	# Print
 	case "$dir" in
-	actions)
-		echo ":: :: END ACTION"
-		;;
 	commands)
-		echo ":: END COMMAND"
+		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
+			echo "■■ 🢂  END COMMAND"
+		else
+			echo ":: => END COMMAND"
+		fi
+
+		;;
+	actions)
+		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
+			echo "■■■■ 🢂  END ACTION"
+		else
+			echo ":::: => END ACTION"
+		fi
 		;;
 	*)
 		die "boostrap: Directory '$dir' not supported"

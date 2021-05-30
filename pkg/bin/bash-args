@@ -43,4 +43,4 @@ else
 	exit 1
 fi
 
-source "$ARGS_LIB_DIR/bash-args.sh"
+source "$ARGS_LIB_DIR/cmd/bash-args.sh"

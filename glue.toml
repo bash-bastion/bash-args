@@ -1,3 +1,6 @@
-name = "bash-args"
-desc = "A cute little Bash library for blazing fast argument parsing"
 using = "Bash"
+
+name = "Edwin Kofler"
+email = "edwin@kofler.dev"
+project = "bash-args"
+desc = "A cute little Bash library for blazing fast argument parsing"

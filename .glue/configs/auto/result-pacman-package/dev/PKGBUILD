@@ -1,4 +1,4 @@
-# Maintainer: '' <>
+# Maintainer:
 pkgname=''
 pkgver=''
 pkgrel='1'
@@ -10,28 +10,20 @@ depends=('bash')
 source=($pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz)
 sha256sums=()
 
-build() {
-	# TODO: bootstrap
-	# TODO: assume package already built
-	# ~/repos/glue/glue.sh cmd build
-	:
-}
-
 check() {
 	# TODO: bootstrap
 	~/repos/glue/glue.sh cmd test
 }
 
 package() {
-	mv "$pkgname" "$pkgname-$pkgver"
 	cd "$pkgname-$pkgver"
 
 	mkdir -p "$pkgdir/usr/bin"
-	find ./bin/ -ignore_readdir_race -print0 \
-		| xargs -r0I '{}' -- cp -r '{}' "$pkgdir/usr/bin"
+	find ./pkg/bin/ -ignore_readdir_race -print0 \
+		| xargs -r0I '{}' -- cp -ar '{}' "$pkgdir/usr/bin"
 	chmod +x "$pkgdir/usr/bin"
 
 	mkdir -p "$pkgdir/usr/lib/$pkgname"
-	find ./lib/ -ignore_readdir_race -print0 \
-		| xargs -r0I '{}' -- cp -r '{}' "$pkgdir/usr/lib/$pkgname"
+	find ./pkg/lib/ -ignore_readdir_race -print0 \
+		| xargs -r0I '{}' -- cp -ar '{}' "$pkgdir/usr/lib/$pkgname"
 }

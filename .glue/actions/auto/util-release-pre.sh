@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
+eval "$GLUE_BOOTSTRAP"
+bootstrap || exit
 
 # @file util-release-pre.sh
 # @brief Steps to perform before specialized version bumping
-# @description Before the release is made, this ensures there
-#   are no changes in the working directory, and from the version
-#   in 'glue-auto.toml', increments the version. This does not handle
-#   anything language specific, so this is usually called along with
-#   'util-release-post.sh', and any other files that need version bumping
-#   is performed in the interum
+# @description This does the following
+# - Ensures a clean Git working tree
+# - Ensures a shared history (no force pushing)
+# - Update version in 'glue-auto.toml'
 
 unset main
 main() {
@@ -17,12 +17,12 @@ main() {
 	local -r dryStatus="$1"
 	isDry() {
 		# must be set to 'notDry' to not be dry.
-		# Defaults to 'not try'
+		# Defaults to 'not dry'
 		[ "$dryStatus" != "notDry" ]
 	}
 
 	if isDry; then
-		log.info "Running release process in dry mode"
+		log.info "Running pre-release process in dry mode"
 	fi
 
 	# Ensure working tree not dirty
@@ -55,10 +55,8 @@ main() {
 		# glue useAction(util-get-version.sh)
 		util.get_action "util-get-version.sh"
 		source "$REPLY"
-		newVersion="$REPLY-DRY"
+		newVersion="$REPLY"
 	else
-		# Prompt for new version
-
 		# Get current version
 		toml.get_key version glue-auto.toml
 		local currentVersion="$REPLY"
@@ -72,7 +70,7 @@ main() {
 
 		# Ensure new version is valid (does not already exist)
 		if [ -n "$(git tag -l "v$newVersion")" ]; then
-			# TODO: ensure there are no tag sthat exists that are greater than it
+			# TODO: ensure there are no tags that exists that are greater than it
 			die 'Version already exists in a Git tag'
 		fi
 	fi
@@ -81,3 +79,6 @@ main() {
 }
 
 main "$@"
+unset main
+
+unbootstrap

@@ -15,9 +15,13 @@ error.cd_failed() {
 }
 
 error.not_supported() {
-	die "Argument '$*' not supported"
+	die "Argument '$1' not supported"
 }
 
 error.empty() {
 	die "Argument '$1' is empty"
+}
+
+error.not_executable() {
+	die "File '$1' is not marked as executable"
 }
