@@ -57,7 +57,7 @@ task() {
 
 	util.general_version_bump "$newVersion"
 
-	ensure.git_working_tree_dirty
+	ensure.git_working_tree_clean
 
 	if is.dry_release; then
 		log.info "Skipping Git taging and artifact release"
