@@ -1,4 +1,4 @@
-# args
+# bash-args
 
 A cute little Bash library for blazing fast argument parsing
 

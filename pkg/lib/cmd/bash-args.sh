@@ -2,7 +2,7 @@
 
 source "$ARGS_LIB_DIR/util/util.sh"
 
-declare -r PROGRAM_VERSION="0.6.2+a151090-DIRTY"
+declare -r PROGRAM_VERSION="0.6.2+32a8aa0-DIRTY"
 
 bash-args-main() {
 	local flag="${1:-}"

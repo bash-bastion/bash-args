@@ -58,7 +58,9 @@ bootstrap() {
 		fi
 	done
 
-	(( shoptExitStatus != 0 )) && shopt -u nullglob
+	if (( shoptExitStatus != 0 )); then
+		shopt -u nullglob
+	fi
 
 	for file in "${filesToSource[@]}"; do
 		source "$file"

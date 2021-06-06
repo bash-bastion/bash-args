@@ -7,10 +7,14 @@ main() {
 	local newVersion="$1"
 	ensure.nonZero 'newVersion' "$newVersion"
 
-	# TODO: show which files changed
+	# TODO: better output
+	exec 8> >(xargs -r0 -- grep -l "PROGRAM_VERSION")
 	find . -ignore_readdir_race -regex '\./pkg/.*\.\(sh\|bash\)' -print0 2>/dev/null \
-		| xargs -r0 \
-		sed -i -e "s|\(PROGRAM_VERSION=\"\).*\(\"\)|\1$newVersion\2|g"
+		| tee /dev/fd/8 \
+		| xargs -r0 -- sed -i -e "s|\(PROGRAM_VERSION=\"\).*\(\"\)|\1$newVersion\2|g"
+	exec 8>&-
+
+	wait
 	log.info "util-Bash-version-bump: Bump done"
 }
 
