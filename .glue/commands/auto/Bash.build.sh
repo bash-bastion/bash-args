@@ -2,13 +2,25 @@
 eval "$GLUE_BOOTSTRAP"
 bootstrap || exit
 
-# glue useAction(util-get-version.sh)
-util.get_action 'util-get-version.sh'
-source "$REPLY"
-declare newVersion="$REPLY"
+unset task
+task() {
+	ensure.file 'glue-auto.toml'
+	toml.get_key 'version' 'glue-auto.toml'
+	local newVersion="$REPLY"
 
-# glue useAction(util-Bash-version-bump.sh)
-util.get_action 'util-Bash-version-bump.sh'
-source "$REPLY" "$newVersion"
+	if [ -z "$newVersion" ]; then
+		util.git_generate_version
+		newVersion="$REPLY"
+	fi
+
+	util.general_version_bump "$newVersion"
+
+	# glue useAction(util-Bash-version-bump.sh)
+	util.get_action 'util-Bash-version-bump.sh'
+	source "$REPLY" "$newVersion"
+}
+
+task "$@"
+unset task
 
 unbootstrap

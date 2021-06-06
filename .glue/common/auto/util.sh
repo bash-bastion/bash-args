@@ -21,6 +21,9 @@ util.get_file() {
 	local dir="$1"
 	local file="$2"
 
+	ensure.nonZero 'dir' "$dir"
+	ensure.nonZero 'file' "$file"
+
 	REPLY=
 	if [ -f "$GLUE_WD/.glue/$dir/$file" ]; then
 		REPLY="$GLUE_WD/.glue/$dir/$file"
@@ -86,4 +89,45 @@ util.shopt() {
 
 	shopt "$1" "$2"
 	_util_shopt_data+="$1.$2 "
+}
+
+util.prompt_new_version() {
+	local currentVersion="$1"
+
+	ensure.nonZero 'currentVersion' "$currentVersion"
+
+	# TODO: make incremenet better
+	REPLY=
+	echo "Current Version: $currentVersion"
+	read -rp 'New Version? ' -ei "$currentVersion"
+}
+
+util.git_generate_version() {
+	REPLY=
+
+	# If the working tree is dirty and there are unstaged changes
+	# for both tracked and untracked files
+	local dirty=
+	if is.git_working_tree_dirty; then
+		dirty=yes
+	fi
+
+	# Get the most recent Git tag that specifies a version
+	local version
+	if version="$(git describe --match 'v*' --abbrev=0 2>/dev/null)"; then
+		version="${version/#v/}"
+	else
+		version="0.0.0"
+	fi
+
+	local id
+	id="$(git rev-parse --short HEAD)"
+	version+="+$id${dirty:+-DIRTY}"
+	REPLY="$version"
+}
+
+util.general_version_bump() {
+	local newVersion="$1"
+
+	sed -i -e "s|\(version[ \t]*=[ \t]*\"\).*\(\"\)|\1${newVersion}\2|g" glue-auto.toml
 }

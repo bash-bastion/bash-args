@@ -17,19 +17,20 @@ action.log() {
 
 	if [ "${currentActionDirname##*/}" = auto ]; then
 		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
-			echo "■■■■ 🢂  START ACTION -> auto/${currentAction##*/}"
+			echo "■■■■ 🢂  START ACTION: 'auto/${currentAction##*/}'"
 		else
-			echo ":::: => START ACTION -> auto/${currentAction##*/}"
+			echo ":::: => START ACTION: 'auto/${currentAction##*/}'"
 		fi
 	else
 		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
-			echo "■■■■ 🢂  START ACTION -> ${currentAction##*/}"
+			echo "■■■■ 🢂  START ACTION: '${currentAction##*/}'"
 		else
-			echo ":::: => START ACTION -> ${currentAction##*/}"
+			echo ":::: => START ACTION: '${currentAction##*/}'"
 		fi
 
 	fi
 
-	(( extGlobExitStatus != 0 )) && shopt -u extglob
-
+	if (( extGlobExitStatus != 0 )); then
+		shopt -u extglob
+	fi
 }

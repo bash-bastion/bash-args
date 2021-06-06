@@ -12,12 +12,28 @@ generated.in() {
 	fi
 	mkdir  "$GLUE_WD/.glue/generated/$dir"
 
-	# TODO: clean up print
-	echo "-- generated.in: '$GENERATED_DIR'"
+
+	shopt -q extglob
+	local extGlobExitStatus=$?
+	shopt -s extglob
+
+	if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
+		echo "■■■■■■ 🢂  IN GENERATED: '$GENERATED_DIR'"
+	else
+		echo "=> IN GENERATED: '$GENERATED_DIR'"
+	fi
+
+	if (( extGlobExitStatus != 0 )); then
+		shopt -u extglob
+	fi
 }
 
 generated.out() {
-	echo "-- generated.out '$GENERATED_DIR'"
+	if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
+		echo "■■■■■■ 🢂  OUT GENERATED: '$GENERATED_DIR'"
+	else
+		echo "=> OUT GENERATED: '$GENERATED_DIR'"
+	fi
 
 	cd "$GLUE_WD" || error.cd_failed
 }
