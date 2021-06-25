@@ -328,7 +328,7 @@ args.parse() {
 
 	argumentOutput=
 	if [ "${#argsHelpArrayArgs[@]}" -gt 0 ]; then
-		printf -v argumentOutput "\nArguments:\n%s" "${argsHelpArrayArgs[*]}"
+		printf -v argumentOutput "\nSubcommands:\n%s" "${argsHelpArrayArgs[*]}"
 	fi
 
 	IFS="$oldIFS"
