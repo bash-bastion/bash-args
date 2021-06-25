@@ -190,6 +190,15 @@ args.parse() {
 							fi
 						fi
 				esac
+			# This is the last element of "$@". It only applies to boolean options
+			elif [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = no ]; then
+				if [ -n "$longFlag" ]; then
+					args+=(["$longFlag"]=yes)
+				fi
+
+				if [ -n "$shortFlag" ]; then
+					args+=(["$shortFlag"]=yes)
+				fi
 			fi
 
 			# for argsHelpText
