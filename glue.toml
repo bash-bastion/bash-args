@@ -4,7 +4,7 @@ distroPackageName = 'glue'
 
 name = "Edwin Kofler"
 email = "edwin@kofler.dev"
-
+glueVersion = 'latest'
 
 gitRemoteUser = 'eankeen'
 gitRemoteRepo = 'bash-args'

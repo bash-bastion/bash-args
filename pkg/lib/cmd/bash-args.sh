@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-source "$ARGS_LIB_DIR/util/util.sh"
+source "$PROGRAM_LIB_DIR/util/util.sh"
 
 declare -r PROGRAM_VERSION=""
 
