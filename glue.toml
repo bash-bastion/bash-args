@@ -1,6 +1,14 @@
 using = "Bash"
+gitRepoName = 'bash-args'
+distroPackageName = 'glue'
 
 name = "Edwin Kofler"
 email = "edwin@kofler.dev"
+
+
+gitRemoteUser = 'eankeen'
+gitRemoteRepo = 'bash-args'
+
 project = "bash-args"
-desc = "A cute little Bash library for blazing fast argument parsing"
+description = "A cute little Bash library for blazing fast argument parsing"
+license = 'Apache-2.0'

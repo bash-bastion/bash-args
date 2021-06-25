@@ -1,19 +1,24 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
-ensure.cmd 'shellcheck'
+action() {
+	ensure.cmd 'shellcheck'
 
-# https://github.com/koalaman/shellcheck/issues/143
-# find . -ignore_readdir_race -regex '.*\.\(sh\|ksh\|bash\)' -print0 \
-# 	| xargs -r0 \
-# 	shellcheck --check-sourced --
+	local exitCode=0
 
+	util.shopt -u dotglob
+	util.shopt -s globstar
+	util.shopt -s nullglob
 
-util.shopt -u dotglob
-util.shopt -s globstar
-util.shopt -s nullglob
+	if shellcheck --check-sourced -- ./**/?*.{sh,ksh,bash}; then : else
+		if is.wet_release; then
+			exitCode=$?
+		fi
+	fi
 
-shellcheck --check-sourced -- ./**/*.{sh,ksh,bash}
+	REPLY="$exitCode"
+}
 
+action "$@"
 unbootstrap

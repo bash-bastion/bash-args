@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
-unset main
-main() {
+action() {
 	local newVersion="$1"
 	ensure.nonZero 'newVersion' "$newVersion"
 
@@ -18,7 +17,5 @@ main() {
 	log.info "util-Bash-version-bump: Bump done"
 }
 
-main "$@"
-unset main
-
+action "$@"
 unbootstrap

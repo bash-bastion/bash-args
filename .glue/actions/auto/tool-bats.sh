@@ -1,25 +1,38 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
-ensure.cmd 'bats'
-
-unset main
-main() {
+action() {
 	local -a dirs=()
-	if [ -d pkg ]; then
-		cd pkg || error.cd_failed
-		dirs=(../test ../tests)
-	else
-		dirs=(test tests)
-	fi
+	local exitCode=0
 
-	for dir in "${dirs[@]}"; do
-		[[ -d $dir ]] || continue
+	ensure.cmd 'bats'
+	(
+		local exitCode=0
 
-		bats --recursive --output "." "$dir"
-	done
+		if [ -d pkg ]; then
+			ensure.cd 'pkg'
+
+			dirs=(../test ../tests)
+		else
+			dirs=(test tests)
+		fi
+
+		for dir in "${dirs[@]}"; do
+			if [ ! -d "$dir" ]; then
+				continue
+			fi
+
+			if bats --recursive --output "." "$dir"; then : else
+				exitCode=$?
+			fi
+		done
+
+		return "$exitCode"
+	); exitCode=$?
+
+	REPLY="$exitCode"
 }
 
-main "$@"
+action "$@"
 unbootstrap

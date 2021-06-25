@@ -1,5 +1,6 @@
 # shellcheck shell=bash
 
+: "${PROGRAM_LIB_DIR:?"Error: Variable 'PROGRAM_LIB_DIR' not defined"}"
 source "$ARGS_LIB_DIR/util/util.sh"
 
 args.parse() {

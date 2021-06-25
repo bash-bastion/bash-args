@@ -1,31 +1,46 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
-ensure.cmd 'shdoc'
+action() {
+	ensure.cmd 'shdoc'
 
-util.shopt -s dotglob
-util.shopt -s globstar
-util.shopt -s nullglob
+	util.shopt -s dotglob
+	util.shopt -s globstar
+	util.shopt -s nullglob
 
-generated.in 'tool-shdoc'
-(
-	if [ -d pkg ]; then
-		cd pkg || error.cd_failed
-	fi
+	local exitCode=0
 
-	for file in ./**/*.{sh,bash}; do
-		if [[ $file == *'/.glue/'* ]]; then
-			continue
-		fi
+	bootstrap.generated 'tool-shdoc'; (
+		ensure.cd 'pkg'
 
-		declare output="$GENERATED_DIR/$file"
-		mkdir -p "${output%/*}"
-		output="${output%.*}"
-		output="$output.md"
-		shdoc < "$file" > "$output"
-	done
-) || exit
-generated.out
+		local exitCode=0
 
+		for file in ./**/*.{sh,bash}; do
+			local outputFile="$GENERATED_DIR/$file"
+			mkdir -p "${outputFile%/*}"
+			outputFile="${outputFile%.*}"
+			outputFile="$outputFile.md"
+			if shdoc < "$file" > "$outputFile"; then : else
+				# TODO: set exitCode on all
+				if is.wet_release; then
+					exitCode=$?
+				fi
+			fi
+
+			if [ "$(stat -c "%s" "$outputFile")" -le 5 ]; then
+				rm "$outputFile"
+				rmdir -p --ignore-fail-on-non-empty "$GENERATED_DIR"
+			fi
+
+			mkdir -p "$GENERATED_DIR"
+		done
+
+		return "$exitCode"
+	); exitCode=$?; unbootstrap.generated
+
+	REPLY="$exitCode"
+}
+
+action "$@"
 unbootstrap

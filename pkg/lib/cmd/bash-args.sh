@@ -2,7 +2,7 @@
 
 source "$ARGS_LIB_DIR/util/util.sh"
 
-declare -r PROGRAM_VERSION="0.7.0"
+declare -r PROGRAM_VERSION=""
 
 bash-args-main() {
 	local flag="${1:-}"

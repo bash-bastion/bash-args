@@ -5,3 +5,4 @@ package/rpm/**
 !package/*/toast.yml
 !package/*/PKGBUILD
 !package/*/*.spec
+.glue/

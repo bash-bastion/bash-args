@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
-ensure.cmd 'shellharden'
+action() {
+	ensure.cmd 'shellharden'
 
-util.shopt -s globstar
-util.shopt -s nullglob
+	util.shopt -s globstar
+	util.shopt -s nullglob
 
-# shellharden --suggest -- ./**/*.{sh,bash}
-# shellharden --check -- ./**/*.{sh,bash}
+	shellharden --suggest -- ./**/*.{sh,bash}
+	shellharden --check -- ./**/*.{sh,bash}
+}
 
+action "$@"
 unbootstrap
