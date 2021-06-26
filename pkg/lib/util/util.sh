@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-args.util.die() {
+bash_args.util.die() {
 	if [[ -n "$*" ]]; then
-		args.util.log_error "$*. Exiting"
+		bash_args.util.log_error "$*. Exiting"
 	else
-		args.util.log_error "Exiting"
+		bash_args.util.log_error "Exiting"
 	fi
 
 	if [[ -v PS1 || $- = *i* ]]; then
@@ -14,7 +14,7 @@ args.util.die() {
 	exit 1
 }
 
-args.util.log_info() {
+bash_args.util.log_info() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Info: $*"
 	else
@@ -22,7 +22,7 @@ args.util.log_info() {
 	fi
 }
 
-args.util.log_warn() {
+bash_args.util.log_warn() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Warn: $*"
 	else
@@ -30,7 +30,7 @@ args.util.log_warn() {
 	fi
 }
 
-args.util.log_error() {
+bash_args.util.log_error() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Error: $*"
 	else
