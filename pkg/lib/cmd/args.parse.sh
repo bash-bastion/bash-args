@@ -38,18 +38,22 @@ args.parse() {
 
 		local type="${line%% *}"
 		if [ "$type" = "@flag" ]; then
-			# Parse lines; ensure each variable is blank if parsing did not find anything
-			# (corrects for parameter expansion behavior)
+			# Parse line
+			# TODO: condence flagNameOptional and flagNameRequired with extglob features
 			local flagNameOptional="${line##*[}"; flagNameOptional="${flagNameOptional%%]*}"
 			local flagNameRequired="${line##*<}"; flagNameRequired="${flagNameRequired%%>*}"
 			local flagValueDefault="${line##*\{}"; flagValueDefault="${flagValueDefault%%\}*}"
 			local flagDescription="${line##* -}"
+
+			# Ensure each variable is blank if parsing did not find anything. This corrects for parameter
+			# expansion behavior, since no modifications to the original line if a match was not found
 			if [ "$line" = "$flagNameOptional" ]; then flagNameOptional=; fi
 			if [ "$line" = "$flagNameRequired" ]; then flagNameRequired=; fi
 			if [ "$line" = "$flagValueDefault" ]; then
-				# The flag does not expect a value qualifier. To differentiate
-				# @from passing in '{}' (a flag that defaults to empty), the
-				# variable is unset
+				# We must differentiate between specifying in '{}' (a flag that defaults to empty), and not
+				# specifying '{}'. If '{}' is specified (default empty flag), this variable is unset;
+				# otherwise, if '{}' is not specified at all, the variable is unset. If unset, we expect
+				# the flag to be ONLY a boolean flag, and expect no values to follow it (only more flags)
 				unset flagValueDefault
 			fi
 			if [ "$line" = "$flagDescription" ]; then flagDescription=; fi
@@ -65,14 +69,21 @@ args.parse() {
 				return
 			fi
 
-			# Set flagName, which always has a value unlike
-			# flagNameOptional or flagNameRequired
+			# Set 'longFlag' and 'shortFlag', using 'flagName' as an intermediary value so it works
+			# whether the line specifies either an optional or a required argument
 			local flagName="${flagNameOptional:-"$flagNameRequired"}"
 			local longFlag="${flagName%%.*}"
 			local shortFlag="${flagName##*.}"
+
+			# Like above, we account for the behavior of parameter expansion, ensuring 'shortFlag' is empty
+			# if it was not provided (i.e, longFlag was only provided). We do not do this
+			# for 'longFlag' because if it was not provided (i.e., only 'shortFlag' was provided), the
+			# dot is still required to be there (to differentiate it from a long flag), so the parameter
+			# expansion is guaranteed to work
 			if [ "$flagName" = "$shortFlag" ]; then shortFlag=; fi
 
-			# Add to argsCommandBooleanFlags if applicable
+			# Append to argsCommandBooleanFlags, if applicable, to be used later for enduring
+			# a flag is not supposed to have any value specifier following it
 			if [[ ! -v flagValueDefault ]]; then
 				if [ -n "$longFlag" ]; then
 					argsCommandBooleanFlags+=("$longFlag")
@@ -83,15 +94,19 @@ args.parse() {
 				fi
 			fi
 
-			# Add to argsAllFlags
+			# Append to argsAllFlags, if applicable, to be used later for ensuring
+			# a particular flag was actually specified in the stdin spec
 			if [ -n "$longFlag" ]; then
-					argsAllFlags+=("--$longFlag")
+				argsAllFlags+=("--$longFlag")
 			fi
 
 			if [ -n "$shortFlag" ]; then
 				argsAllFlags+=("-$shortFlag")
 			fi
 
+			# TODO: rename
+			# Set the 'currentFlag' or flags for pretty printing the supplied
+			# flags (short and long) for the current line
 			local currentFlag=
 			if [[ -n "$longFlag" && -n "$shortFlag" ]]; then
 				currentFlag="--$longFlag or -$shortFlag"
@@ -120,6 +135,31 @@ args.parse() {
 				fi
 			done
 			local flagValueCli="$arg"
+
+			# Debug
+			if [[ -v DEBUG_BASH_ARGS ]]; then
+				# Ensure the third file descriptor is valid for writing. We use 3 because
+				# it's printed to the terminal when testing with Bats using the TAP formatter
+				if ! : >&3; then
+					exec 3>&1
+				fi 2>/dev/null
+
+				cat >&3 <<-EOF
+				flagNameOptional: $flagNameOptional
+				flagNameRequired: $flagNameRequired
+				flagValueDefault: ${flagValueDefault-"NOT SET"}
+				flagDescription: $flagDescription
+
+				flagName: $flagName
+				longFlag: $longFlag
+				shortFlag: $shortFlag
+
+				argsCommandBooleanFlags: ${argsCommandBooleanFlags[@]}
+				argsAllFlags: ${argsAllFlags[@]}
+				currentFlag: $currentFlag
+				flagValueCli: $flagValueCli
+				EOF
+			fi
 
 			# If the flag name is required, we exit a failure if it's not there
 			if [ -n "$flagNameRequired" ]; then
@@ -174,11 +214,11 @@ args.parse() {
 						# The user-supplied flag is valid, override the default
 						if [[ -v flagValueDefault ]]; then
 							if [ -n "$longFlag" ]; then
-								args+=(["$longFlag"]="$arg")
+								args+=(["$longFlag"]="$flagValueCli")
 							fi
 
 							if [ -n "$shortFlag" ]; then
-								args+=(["$shortFlag"]="$arg")
+								args+=(["$shortFlag"]="$flagValueCli")
 							fi
 						else
 							if [ -n "$longFlag" ]; then
@@ -201,7 +241,7 @@ args.parse() {
 				fi
 			fi
 
-			# for argsHelpText
+			# Construct 'argsHelpText'
 
 			# shellcheck disable=SC1007
 			local flagNameCombo= flagDescription=
@@ -255,9 +295,8 @@ args.parse() {
 		fi
 	done
 
-	# generate argsCommands
-	# note that so long as we check and exit on flags that
-	# are not recognized, this should provide accurate results
+	# Construct 'argsCommands'. Note that this ONLY provides accurate results if we check and exit the
+	# program on flags that are not recognized
 	local argsCommandMode=append
 	for arg; do
 		if [ "$argsCommandMode" = skip ]; then

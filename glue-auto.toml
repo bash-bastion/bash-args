@@ -1,1 +1,3 @@
 version = "0.7.0+d81087f-DIRTY"
+glueVersion = 'latest'
+glueStoreVersion = 'latest'

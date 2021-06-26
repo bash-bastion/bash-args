@@ -52,7 +52,19 @@ set -Eeuo pipefail
 	[[ ! -v 'args[-p]' ]]
 }
 
-# # ------------------- without values -------------------
+# ------------------- without values -------------------
+@test "longOption no value" {
+	skip 'Issue #6'
+
+	declare -A args=()
+
+	source ./bin/args.parse --version <<-'EOF'
+	@flag [version.v] - The port to open on
+	EOF
+
+	[[ ${args[version]} == yes ]]
+	[[ ${args[v]} == yes ]]
+}
 
 @test "longOption and default" {
 	declare -A args=()
