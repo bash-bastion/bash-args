@@ -1,12 +1,14 @@
 # shellcheck shell=bash
 
-: "${PROGRAM_LIB_DIR:?"Error: Variable 'PROGRAM_LIB_DIR' not defined"}"
-source "$PROGRAM_LIB_DIR/util/util.sh"
+source "$BASH_ARGS_LIB_DIR/util/util.sh"
 
-# Not readonly as this is sourced
-declare PROGRAM_VERSION="0.7.0+916ca13-DIRTY"
+# TODO: namespace the entrypoint, and ensure to unset the variables after
+# Not readonly as this is sourced. This also should read 'BASH_ARGS_VERSION',
+# not 'PROGRAM_VERSION' since this file is sourced and 'PROGRAM_VERSION'
+# is more generic
+declare BASH_ARGS_VERSION="0.7.0+916ca13-DIRTY"
 
-args.parse() {
+bash-args() {
 	case "$1" in
 	-h|--help)
 		cat <<-EOF
@@ -28,7 +30,7 @@ args.parse() {
 		;;
 	-v|--version)
 		cat <<-"EOF"
-			Version: $PROGRAM_VERSION
+			Version: $BASH_ARGS_VERSION
 		EOF
 		return
 		;;
@@ -422,6 +424,9 @@ args.parse() {
 	declare -g argsHelpText="Usage:
   $execName [flags] <arguments>
 ${descriptionOutput}${argumentOutput}${flagOutput}"
+
+	unset BASH_ARGS_LIB_DIR
+	unset BASH_ARGS_VERSION
 }
 
-args.parse "$@"
+bash-args "$@"

@@ -11,6 +11,8 @@ A cute little Bash library for blazing fast argument parsing
 
 ## Installation
 
+STATUS: IN DEVELOPMENT!
+
 ```sh
 # With Basher
 basher install eankeen/args
