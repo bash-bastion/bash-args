@@ -1,4 +1,4 @@
-# args
+# bash-args
 
 A cute little Bash library for blazing fast argument parsing
 
@@ -7,7 +7,7 @@ A cute little Bash library for blazing fast argument parsing
 - Uses only builtins
 - Uses no subshells
 - Simple API
-- More featureful than [opts.bash](https://github.com/reconquest/opts.bash) and cleaner / easier to use than [bash_option_parser](https://github.com/MihirLuthra/bash_option_parser), [longoption](https://github.com/team-lab/longoption) and more recent than [easyoptions](https://github.com/renatosilva/easyoptions)
+- More featureful than [opts.bash](https://github.com/reconquest/opts.bash) and cleaner / easier to use than [bash_option_parser](https://github.com/MihirLuthra/bash_option_parser), [longoption](https://github.com/team-lab/longoption), more recent than [easyoptions](https://github.com/renatosilva/easyoptions), and no weird codegen step like [argbash](https://github.com/matejak/argbash) or [bash-argsparse](https://github.com/Anvil/bash-argsparse)
 
 ## Installation
 
