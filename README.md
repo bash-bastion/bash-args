@@ -25,11 +25,11 @@ git clone "https://github.com/eankeen/args" ~/.args
 
 ```bash
 # Declaring `args` may be required
-declare -a args
+declare -A args=()
 
 # Pass through your command line arguments to 'args'
 # Pass your argument specification through stdin (see more examples below)
-source args.parse "$@" <<-"EOF"
+source bash-args parse "$@" <<-"EOF"
 @flag [port.p] {3000} - The port to open on
 EOF
 
