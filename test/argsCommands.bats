@@ -5,7 +5,7 @@ set -Eeuo pipefail
 	declare -A args
 	declare -a argsCommands=()
 
-	source ./bin/args.parse alfa bravo <<-'EOF'
+	source bash-args parse alfa bravo <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -19,7 +19,7 @@ set -Eeuo pipefail
 	declare -A args
 	declare -a argsCommands=()
 
-	source ./bin/args.parse --port 3005 serve --user admin --enable-security now <<-'EOF'
+	source bash-args parse --port 3005 serve --user admin --enable-security now <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	@flag [user] {} - User
 	@flag [enable-security] - Enable security
@@ -34,7 +34,7 @@ set -Eeuo pipefail
 	declare -A args
 	declare -a argsCommands=()
 
-	source ./bin/args.parse --port 3005 serve now --enable-security last <<-'EOF'
+	source bash-args parse --port 3005 serve now --enable-security last <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	@flag [enable-security] - Whether to enable security
 	EOF

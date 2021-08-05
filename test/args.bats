@@ -4,7 +4,7 @@ set -Eeuo pipefail
 @test "longOption with value" {
 	declare -A args=()
 
-	source ./bin/args.parse --port 3005 <<-'EOF'
+	source bash-args parse --port 3005 <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
@@ -16,7 +16,7 @@ set -Eeuo pipefail
 @test "shortOption with value" {
 	declare -A args=()
 
-	source ./bin/args.parse -p 3005 <<-'EOF'
+	source bash-args parse -p 3005 <<-'EOF'
 	@flag [.p] {3000} - The port to open on
 	EOF
 
@@ -27,7 +27,7 @@ set -Eeuo pipefail
 @test "longOption and shortOption with longOption value" {
 	declare -A args=()
 
-	source ./bin/args.parse --port 3005 <<-'EOF'
+	source bash-args parse --port 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -41,7 +41,7 @@ set -Eeuo pipefail
 @test "longOption and shortOption with shortOption value" {
 	declare -A args=()
 
-	source ./bin/args.parse -p 3005 <<-'EOF'
+	source bash-args parse -p 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -58,7 +58,7 @@ set -Eeuo pipefail
 
 	declare -A args=()
 
-	source ./bin/args.parse --version <<-'EOF'
+	source bash-args parse --version <<-'EOF'
 	@flag [version.v] - The port to open on
 	EOF
 
@@ -69,7 +69,7 @@ set -Eeuo pipefail
 @test "longOption and default" {
 	declare -A args=()
 
-	source ./bin/args.parse <<-'EOF'
+	source bash-args parse <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 
@@ -79,7 +79,7 @@ set -Eeuo pipefail
 @test "shortOption and default" {
 	declare -A args=()
 
-	source ./bin/args.parse <<-'EOF'
+	source bash-args parse <<-'EOF'
 	@flag [.p] {3000} - The port to open on
 	EOF
 
@@ -89,7 +89,7 @@ set -Eeuo pipefail
 @test "longOption and shortOption" {
 	declare -A args=()
 
-	source ./bin/args.parse <<-'EOF'
+	source bash-args parse <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -103,7 +103,7 @@ set -Eeuo pipefail
 	declare -A args=()
 
 	! (
-		source ./bin/args.parse --port --something nother <<-'EOF'
+		source bash-args parse --port --something nother <<-'EOF'
 		@flag <port> {} - The port to open on
 		EOF
 	)
@@ -113,7 +113,7 @@ set -Eeuo pipefail
 	declare -A args=()
 
 	(
-		source ./bin/args.parse --port --something nother <<-'EOF'
+		source bash-args parse --port --something nother <<-'EOF'
 		@flag <port> - The port to open on
 		@flag <something> - something
 		EOF
@@ -124,7 +124,7 @@ set -Eeuo pipefail
 	declare -A args=()
 
 	! (
-		source ./bin/args.parse --port - <<-'EOF'
+		source bash-args parse --port - <<-'EOF'
 		@flag [port] {} - The port to open on
 		EOF
 	)
@@ -134,7 +134,7 @@ set -Eeuo pipefail
 	declare -A args=()
 
 	(
-		source ./bin/args.parse --port - <<-'EOF'
+		source bash-args parse --port - <<-'EOF'
 		@flag [port] - The port to open on
 		EOF
 	)
@@ -144,7 +144,7 @@ set -Eeuo pipefail
 	declare -A args=()
 
 	! (
-		source ./bin/args.parse <<-'EOF'
+		source bash-args parse <<-'EOF'
 		@flag <port> The port to open on
 		EOF
 	)

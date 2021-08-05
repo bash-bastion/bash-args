@@ -21,7 +21,7 @@ bash-args() {
 
 		Flags
 		--version
-			Show version of 'args.parse'
+			Show version of 'bash-args'
 
 		--help
 			Show help
@@ -99,12 +99,12 @@ bash-args() {
 
 			# Sanity checks
 			if [ -z "$flagNameOptional" ] && [ -z "$flagNameRequired" ]; then
-				bash_args.util.die 'args.parse: Must specify either an optional or required flag; neither were specified'
+				bash_args.util.die 'bash-args: Must specify either an optional or required flag; neither were specified'
 				return
 			fi
 
 			if [ -n "$flagNameOptional" ] && [ -n "$flagNameRequired" ]; then
-				bash_args.util.die 'args.parse: Must specify either an optional or required flag; both were specified'
+				bash_args.util.die 'bash-args: Must specify either an optional or required flag; both were specified'
 				return
 			fi
 
@@ -205,14 +205,14 @@ bash-args() {
 				# If we did not set flagWasFound=yes, it means it did not find
 				# the flag. So, if the flag is <required>, we fail right away
 				if [ "$flagWasFound" = no ]; then
-					bash_args.util.die "args.parse: You must supply the flag '$currentFlag' with a value"
+					bash_args.util.die "bash-args: You must supply the flag '$currentFlag' with a value"
 					return
 				fi
 
 				# If we were supposed to do an immediate break, but didn't actually
 				# do it, it means we are on the last argument and there is no value
 				if [ "$flagWasFound" = yes ] && [ "$didImmediateBreak" = no ]; then
-					bash_args.util.die "args.parse: No value found for flag '$currentFlag'"
+					bash_args.util.die "bash-args: No value found for flag '$currentFlag'"
 					return
 				fi
 			fi
@@ -245,7 +245,7 @@ bash-args() {
 				case "$flagValueCli" in
 					-*)
 						if [[ -v flagValueDefault ]]; then
-							bash_args.util.die "args.parse: You must supply a value for '$currentFlag'"
+							bash_args.util.die "bash-args: You must supply a value for '$currentFlag'"
 							return
 						fi
 						;;
@@ -329,7 +329,7 @@ bash-args() {
 			printf -v name '%-20s' "  $name"
 			argsHelpArrayArgs+=("${name}${argDescription}"$'\n')
 		else
-			bash_args.util.die "args.parse: Pragma must be either @flag or @arg. Received: '$type'"
+			bash_args.util.die "bash-args: Pragma must be either @flag or @arg. Received: '$type'"
 			return
 		fi
 	done
@@ -384,7 +384,7 @@ bash-args() {
 			done
 
 			if [ "$isValidFlag" = no ]; then
-				bash_args.util.die "args.parse: Flag '$arg' is not accepted"
+				bash_args.util.die "bash-args: Flag '$arg' is not accepted"
 				return
 			fi
 		esac

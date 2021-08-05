@@ -14,11 +14,12 @@ A cute little Bash library for blazing fast argument parsing
 STATUS: IN DEVELOPMENT!
 
 ```sh
-# With Basher
-basher install eankeen/args
+# With bpm (recommended)
+bpm install eankeen/args
 
 # With Git
-git clone "https://github.com/eankeen/args" ~/.args
+git clone "https://github.com/eankeen/args" "$HOME/.bash-args"
+export PATH="$HOME/.bash-args/pkg/bin:$PATH"
 ```
 
 ## Usage
@@ -29,7 +30,7 @@ declare -A args=()
 
 # Pass through your command line arguments to 'args'
 # Pass your argument specification through stdin (see more examples below)
-source bash-args parse "$@" <<-"EOF"
+source bash-args parse parse "$@" <<-"EOF"
 @flag [port.p] {3000} - The port to open on
 EOF
 
@@ -49,7 +50,7 @@ echo "argsHelpText: $argsHelpText"
 
 ### Argument Specification
 
-The following are valid lines and their explanations to pass as stdin to `args.parse`
+The following are valid lines and their explanations to pass as stdin to `bash-args`
 
 #### `@flag [verbose] - Enable verbose logging`
 

@@ -5,7 +5,7 @@ set -Eeuo pipefail
 	declare -A args=()
 	declare argsRawSpec=
 
-	source ./bin/args.parse "--port" "3005" -- one two <<-'EOF'
+	source bash-args parse "--port" "3005" -- one two <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	EOF
 

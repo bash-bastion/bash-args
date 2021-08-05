@@ -2,8 +2,10 @@
 
 # https://github.com/basherpm/basher
 
-source args.parse <<"EOF"
+source bash-args parse parse <<"EOF"
 @arg help - Display help for a command
 @arg commands - List all available basher commands
 @arg init - Configure the shell environment for basher
 EOF
+
+echo "$argsHelpText"

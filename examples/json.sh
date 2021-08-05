@@ -2,7 +2,7 @@
 
 # https://github.com/dominictarr/JSON.sh
 
-source args.parse -- <<"EOF"
+source bash-args parse -- <<"EOF"
 @flag [.p] - Prune empty. Exclude fields with empty values.
 @flag [.l] - Leaf only. Only show leaf nodes, which stops data duplication.
 @flag [.b] - Brief. Combines 'Leaf only' and 'Prune empty' options.

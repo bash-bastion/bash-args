@@ -2,7 +2,7 @@
 
 ## Variables
 
-Available variables after calling `args.parse`. If the values of the variables appear to be blank, you may have to declare the variable before calling `args.parse`
+Available variables after calling `bash-args`. If the values of the variables appear to be blank, you may have to declare the variable before calling `bash-args`
 
 ### `argsPostHyphen`
 
@@ -11,7 +11,7 @@ An array that contains every argument or flag after the first `--`
 ```sh
 declare -a argsPostHyphen=()
 
-source args.parse --port 3005 -- ls -L --color=always /lib <<-'EOF'
+source bash-args parse --port 3005 -- ls -L --color=always /lib <<-'EOF'
 	@flag [port] {3000} - The port to open on
 EOF
 
@@ -21,12 +21,12 @@ echo "${argsPostHyphen[*]}"
 
 ### `argsRawSpec`
 
-A string that is a copy of standard input to `args.parse`
+A string that is a copy of standard input to `bash-args`
 
 ```sh
 declare argsRawSpec=
 
-source args.parse --port 3005 <<-'EOF'
+source bash-args parse --port 3005 <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	@flag [version.v] - Prints program version
 EOF
@@ -43,14 +43,14 @@ An associative array that contains the values of arguments
 ```sh
 declare -A args=()
 
-source args.parse --port 3005 <<-'EOF'
+source bash-args parse --port 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
 echo "${args[port]} ${args[p]}"
 # 3005 3005
 
-source args.parse -p 3005 <<-'EOF'
+source bash-args parse -p 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
@@ -65,7 +65,7 @@ An array contaning all the commands supplied
 ```sh
 declare -a argsCommands=()
 
-source args.parse --port 3005 serve --user admin now --enable-security <<-'EOF'
+source bash-args parse --port 3005 serve --user admin now --enable-security <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
@@ -77,4 +77,15 @@ echo "${argsCommands[*]}"
 
 The full generated help text
 
-// TODO
+```sh
+source bash-args parse parse "$@" <<-"EOF"
+@flag [port.p] {3000} - The port to open on
+EOF
+
+echo "$argsHelpText"
+# Usage:
+#   stdin [flags] <arguments>
+
+# Flags:
+#   p, port           (Default: 3000)
+```
