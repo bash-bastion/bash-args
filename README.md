@@ -15,7 +15,7 @@ STATUS: IN DEVELOPMENT!
 
 ```sh
 # With bpm (recommended)
-bpm install eankeen/args
+bpm --global install eankeen/args
 
 # With Git
 git clone "https://github.com/eankeen/args" "$HOME/.bash-args"
