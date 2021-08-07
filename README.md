@@ -7,7 +7,25 @@ A cute little Bash library for blazing fast argument parsing
 - Uses only builtins
 - Uses no subshells
 - Simple API
-- More featureful than [opts.bash](https://github.com/reconquest/opts.bash) and cleaner / easier to use than [bash_option_parser](https://github.com/MihirLuthra/bash_option_parser), [longoption](https://github.com/team-lab/longoption), more recent than [easyoptions](https://github.com/renatosilva/easyoptions), and no weird codegen step like [argbash](https://github.com/matejak/argbash) or [bash-argsparse](https://github.com/Anvil/bash-argsparse)
+
+TODO: add types of options to table
+
+| Software | No Codegen | No getopts/getopt | Preserves arguments | At least some testing
+| - | - | - | - | - |
+| hyperupcall/bash-args | Yes | Yes | Yes | Yes
+| [argbash]       | No | No | ?
+| [bash-argsparse] | No | No | ?
+| [easyoptions] | No | No | ?
+| [longoption] | Yes | ? | ?
+| [bash_option_parser] | Yes | Yes | Yes | No
+| [opts.bash] | Yes | No | No | Yes
+
+[argbash]: https://github.com/matejak/argbash
+[bash-argsparse]: https://github.com/Anvil/bash-argsparse
+[easyoptions]: https://github.com/renatosilva/easyoptions
+[longoption]: https://github.com/team-lab/longoption
+[bash_option_parser]: https://github.com/MihirLuthra/bash_option_parser
+[opts.bash]: https://github.com/reconquest/opts.bash
 
 ## Installation
 
@@ -30,7 +48,7 @@ declare -A args=()
 
 # Pass through your command line arguments to 'args'
 # Pass your argument specification through stdin (see more examples below)
-source bash-args parse parse "$@" <<-"EOF"
+source bash-args parse "$@" <<-"EOF"
 @flag [port.p] {3000} - The port to open on
 EOF
 
