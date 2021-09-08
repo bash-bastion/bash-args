@@ -1,0 +1,7 @@
+[package]
+name = 'bash-args'
+slug = 'bash_args'
+version = '0.8.0'
+authors = ['Edwin Kofler" <edwin@kofler.dev>']
+
+binDirs = [ 'pkg/bin' ]
