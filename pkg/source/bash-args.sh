@@ -420,5 +420,3 @@ ${descriptionOutput}${argumentOutput}${flagOutput}"
 	unset BASH_ARGS_LIB_DIR
 	unset BASH_ARGS_VERSION
 }
-
-bash-args "$@"
