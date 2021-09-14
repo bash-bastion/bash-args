@@ -1,13 +1,5 @@
 # shellcheck shell=bash
 
-source "$BASH_ARGS_LIB_DIR/util/util.sh"
-
-# TODO: namespace the entrypoint, and ensure to unset the variables after
-# Not readonly as this is sourced. This also should read 'BASH_ARGS_VERSION',
-# not 'PROGRAM_VERSION' since this file is sourced and 'PROGRAM_VERSION'
-# is more generic
-declare BASH_ARGS_VERSION="0.7.0+916ca13-DIRTY"
-
 bash-args() {
 	case "$1" in
 	-h|--help)
@@ -30,7 +22,7 @@ bash-args() {
 		;;
 	-v|--version)
 		cat <<-"EOF"
-			Version: $BASH_ARGS_VERSION
+			Version: # TODO
 		EOF
 		return
 		;;
