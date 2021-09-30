@@ -3,5 +3,18 @@ name = 'bash-args'
 slug = 'bash_args'
 version = '0.8.0'
 authors = ['Edwin Kofler" <edwin@kofler.dev>']
+description = ''
 
-binDirs = [ 'pkg/bin' ]
+[run]
+dependencies = []
+sourceDirs = ['pkg/lib/util', 'pkg/source']
+builtinDirs = []
+binDirs = ['pkg/bin']
+completionDirs = []
+manDirs = []
+
+[run.shellEnvironment]
+
+[run.setOptions]
+
+[run.shoptOptions]
