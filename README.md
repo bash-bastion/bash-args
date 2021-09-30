@@ -31,13 +31,11 @@ TODO: add types of options to table
 
 STATUS: IN DEVELOPMENT!
 
-```sh
-# With bpm (recommended)
-bpm --global install eankeen/args
+Use [Basalt](https://github.com/hyperupcall/basalt), a Bash package manager, to add this project as a dependency
 
-# With Git
-git clone "https://github.com/eankeen/args" "$HOME/.bash-args"
-export PATH="$HOME/.bash-args/pkg/bin:$PATH"
+
+```sh
+basalt add hyperupcall/bash-args
 ```
 
 ## Usage
@@ -48,7 +46,7 @@ declare -A args=()
 
 # Pass through your command line arguments to 'args'
 # Pass your argument specification through stdin (see more examples below)
-source bash-args parse "$@" <<-"EOF"
+bash-args parse "$@" <<-"EOF"
 @flag [port.p] {3000} - The port to open on
 EOF
 
