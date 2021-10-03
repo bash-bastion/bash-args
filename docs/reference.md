@@ -11,7 +11,7 @@ An array that contains every argument or flag after the first `--`
 ```sh
 declare -a argsPostHyphen=()
 
-source bash-args parse --port 3005 -- ls -L --color=always /lib <<-'EOF'
+bash-args parse --port 3005 -- ls -L --color=always /lib <<-'EOF'
 	@flag [port] {3000} - The port to open on
 EOF
 
@@ -26,7 +26,7 @@ A string that is a copy of standard input to `bash-args`
 ```sh
 declare argsRawSpec=
 
-source bash-args parse --port 3005 <<-'EOF'
+bash-args parse --port 3005 <<-'EOF'
 	@flag [port] {3000} - The port to open on
 	@flag [version.v] - Prints program version
 EOF
@@ -43,14 +43,14 @@ An associative array that contains the values of arguments
 ```sh
 declare -A args=()
 
-source bash-args parse --port 3005 <<-'EOF'
+bash-args parse --port 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
 echo "${args[port]} ${args[p]}"
 # 3005 3005
 
-source bash-args parse -p 3005 <<-'EOF'
+bash-args parse -p 3005 <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
@@ -65,7 +65,7 @@ An array contaning all the commands supplied
 ```sh
 declare -a argsCommands=()
 
-source bash-args parse --port 3005 serve --user admin now --enable-security <<-'EOF'
+bash-args parse --port 3005 serve --user admin now --enable-security <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 EOF
 
@@ -78,7 +78,7 @@ echo "${argsCommands[*]}"
 The full generated help text
 
 ```sh
-source bash-args parse parse "$@" <<-"EOF"
+bash-args parse parse "$@" <<-"EOF"
 @flag [port.p] {3000} - The port to open on
 EOF
 

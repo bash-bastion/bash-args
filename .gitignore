@@ -1,8 +1,1 @@
-package/aur/**
-package/deb/**
-package/rpm/**
-!package/*/run.sh
-!package/*/toast.yml
-!package/*/PKGBUILD
-!package/*/*.spec
-.glue/
+.basalt/

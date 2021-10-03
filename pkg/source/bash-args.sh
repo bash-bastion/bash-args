@@ -1,5 +1,7 @@
 # shellcheck shell=bash
 
+# TODO: use snake_case
+
 bash-args() {
 	case "$1" in
 	-h|--help)

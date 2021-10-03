@@ -7,28 +7,14 @@ If you are receiving opaque errors, the following may help
 Ensure `args` exists as an associate array and NOT an index array. Create it _before_ calling out to `bash-args`
 
 
+## Using indexed arrays instead of associative arrays
+
 ```sh
 # Wrong
 declare -a args
 
 # Correct
 declare -A args
-```
-
-## Not sourcing `bash-args`
-
-If you do not source `bash-args` the variables that it sets will not be available to your current shell execution context
-
-```sh
-# Wrong
-bash-args parse "$@" <<-"EOF"
-@flag [port.p] {3000} - The port to open on
-EOF
-
-# Correct
-source bash-args parse parse "$@" <<-"EOF"
-@flag [port.p] {3000} - The port to open on
-EOF
 ```
 
 ## Not declaring variables
