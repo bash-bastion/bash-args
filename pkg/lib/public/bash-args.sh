@@ -78,6 +78,7 @@ bash-args() {
 			local flagValueDefault="${line##*\{}"; flagValueDefault="${flagValueDefault%%\}*}"
 			local flagDescription="${line##* -}"
 
+			# TODO: nullglob
 			# Ensure each variable is blank if parsing did not find anything. This corrects for parameter
 			# expansion behavior, since no modifications to the original line if a match was not found
 			if [ "$line" = "$flagNameOptional" ]; then flagNameOptional=; fi

@@ -1,11 +1,12 @@
 #!/usr/bin/env bats
-set -Eeuo pipefail
+
+load './util/init.sh'
 
 @test "argsCommands is correct basic" {
 	declare -A args
 	declare -a argsCommands=()
 
-	source bash-args parse alfa bravo <<-'EOF'
+	bash-args parse alfa bravo <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	EOF
 
@@ -19,7 +20,7 @@ set -Eeuo pipefail
 	declare -A args
 	declare -a argsCommands=()
 
-	source bash-args parse --port 3005 serve --user admin --enable-security now <<-'EOF'
+	bash-args parse --port 3005 serve --user admin --enable-security now <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	@flag [user] {} - User
 	@flag [enable-security] - Enable security
@@ -34,7 +35,7 @@ set -Eeuo pipefail
 	declare -A args
 	declare -a argsCommands=()
 
-	source bash-args parse --port 3005 serve now --enable-security last <<-'EOF'
+	bash-args parse --port 3005 serve now --enable-security last <<-'EOF'
 	@flag [port.p] {3000} - The port to open on
 	@flag [enable-security] - Whether to enable security
 	EOF

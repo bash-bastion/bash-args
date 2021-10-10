@@ -7,9 +7,9 @@ description = ''
 
 [run]
 dependencies = []
-sourceDirs = ['pkg/lib/util', 'pkg/source']
+sourceDirs = ['pkg/lib', 'pkg/lib/public']
 builtinDirs = []
-binDirs = ['pkg/bin']
+binDirs = []
 completionDirs = []
 manDirs = []
 
