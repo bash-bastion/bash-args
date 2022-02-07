@@ -3,10 +3,10 @@ name = 'bash-args'
 slug = 'bash_args'
 version = '0.9.2'
 authors = ['Edwin Kofler" <edwin@kofler.dev>']
-description = ''
+description = 'A cute little Bash library for blazing fast argument parsing'
 
 [run]
-dependencies = []
+dependencies = ['https://github.com/hyperupcall/bash-core.git@v0.2.0']
 sourceDirs = ['pkg/lib', 'pkg/lib/public']
 builtinDirs = []
 binDirs = []
@@ -16,5 +16,8 @@ manDirs = []
 [run.shellEnvironment]
 
 [run.setOptions]
+errexit = 'on'
+pipefail = 'on'
 
 [run.shoptOptions]
+shift_verbose = 'on'
