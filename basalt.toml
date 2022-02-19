@@ -1,8 +1,9 @@
 [package]
+type = 'bash'
 name = 'bash-args'
 slug = 'bash_args'
 version = '0.9.2'
-authors = ['Edwin Kofler" <edwin@kofler.dev>']
+authors = ['Edwin Kofler <edwin@kofler.dev>']
 description = 'A cute little Bash library for blazing fast argument parsing'
 
 [run]
