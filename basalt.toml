@@ -7,8 +7,8 @@ authors = ['Edwin Kofler <edwin@kofler.dev>']
 description = 'A cute little Bash library for blazing fast argument parsing'
 
 [run]
-dependencies = ['https://github.com/hyperupcall/bash-core.git@v0.2.0']
-sourceDirs = ['pkg/src', 'pkg/src/public']
+dependencies = ['https://github.com/hyperupcall/bash-core@v0.3.2']
+sourceDirs = ['pkg/src/public', 'pkg/src/util']
 builtinDirs = []
 binDirs = []
 completionDirs = []

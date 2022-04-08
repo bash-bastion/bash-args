@@ -1,20 +1,6 @@
-#!/usr/bin/env bash
+# shellcheck shell=bash
 
-bash_args.util.die() {
-	if [[ -n "$*" ]]; then
-		bash_args.util.log_error "$*. Exiting"
-	else
-		bash_args.util.log_error "Exiting"
-	fi
-
-	if [[ -v PS1 || $- = *i* ]]; then
-		return 1
-	fi
-
-	exit 1
-}
-
-bash_args.util.log_info() {
+bash_args.print.info() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Info: $*"
 	else
@@ -22,7 +8,7 @@ bash_args.util.log_info() {
 	fi
 }
 
-bash_args.util.log_warn() {
+bash_args.print.warn() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Warn: $*"
 	else
@@ -30,7 +16,7 @@ bash_args.util.log_warn() {
 	fi
 }
 
-bash_args.util.log_error() {
+bash_args.print.error() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Error: $*"
 	else

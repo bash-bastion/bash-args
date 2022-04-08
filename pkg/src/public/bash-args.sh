@@ -1,423 +1,165 @@
 # shellcheck shell=bash
 
-bash-args() {
-	case "$1" in
-	-h|--help)
-		cat <<-EOF
-		Program:
-		    bash-args
+# TODO: ensure that the number of arguments is divisible by 4 (minus subcommands)
+barg.define_flags() {
+	# Prefix that is used when storing each flag in an associative array. For example,
+	# with a subcmd of 'subcmd', then 'other', the prefix is 'subcmd__other__'
+	local subcmd_prefix=
 
-		Subcommands:
-		    parse
-		        Perform the parsing. Append all arguments after this subcommand
+	local i=
+	for ((i=1; i < $# + 1;)); do
+		local arg="${!i}"
 
-		Flags
-		--version
-			Show version of 'bash-args'
+		# The end of a subcmd was specified
+		if [ "$arg" = 'END' ]; then
+			subcmd_prefix=${subcmd_prefix%__}
+			subcmd_prefix=${subcmd_prefix%__*}
+			subcmd_prefix+='__'
 
-		--help
-			Show help
-		EOF
-		return
-		;;
-	-v|--version)
-		cat <<-"EOF"
-			Version: # TODO
-		EOF
-		return
-		;;
-	parse)
-		shift
-		;;
-	*)
-		bash_args.util.die "Argument not recognized. See '--help' for help"
-		return
-		;;
-	esac
+			i=$((i+1))
+			continue
+		# The start of a subcmd was specified
+		elif [ -n "$arg" ] && [ "${arg::1}" != '-' ]; then
+			local subcmd="$arg"
+			subcmd_prefix+="${subcmd}__"
 
-	# generate argsPostHyphen
-	local appendMode=no
-	for arg; do
-		if [ "$appendMode" = yes ]; then
-			argsPostHyphen+=("$arg")
-		fi
+			printf '%s\n' "subcmd: $subcmd"
+			_args["${subcmd_prefix}${flag_long}"]="a"
 
-		if [ "$arg" = "--" ]; then
-			appendMode=yes
-		fi
-	done
-
-	# Array contaning all flags that should _not_ expect subsequent value
-	local -a args_command_boolean_flags=()
-
-	# Array containing all arguments for help menu
-	local -a args_help_array_args=()
-
-	# Array containing all flags for help menu
-	local -a args_help_array_flags=()
-
-	# Array containing all flags
-	local -a args_all_flags=()
-
-	local line
-	while IFS= read -r line; do
-		argsRawSpec+="$line"$'\n'
-
-		if [ -z "$line" ]; then
+			i=$((i+1))
 			continue
 		fi
 
-		local type="${line%% *}"
-		if [ "$type" = "@flag" ]; then
-			# Parse line
-			# TODO: condence flag_name_optional and flag_name_required with extglob features
-			local flag_name_optional="${line##*[}"; flag_name_optional="${flag_name_optional%%]*}"
-			local flag_name_required="${line##*<}"; flag_name_required="${flag_name_required%%>*}"
-			local flag_name_default="${line##*\{}"; flag_name_default="${flag_name_default%%\}*}"
-			local flag_description="${line##* -}"
+		# A 'normal' pattern of 4 arguments that describes a flag
+		local i_flag_short=$((i+1))
+		local i_flag_attrs=$((i+2))
+		local i_flag_desc=$((i+3))
+		local flag_long="$arg"
+		local flag_short="${!i_flag_short}"
+		local flag_attrs="${!i_flag_attrs}"
+		local flag_desc="${!i_flag_desc}"
+		unset -v i_flag_{short,options,desc}
 
-			# TODO: nullglob
-			# Ensure each variable is blank if parsing did not find anything. This corrects for parameter
-			# expansion behavior, since no modifications to the original line if a match was not found
-			if [ "$line" = "$flag_name_optional" ]; then flag_name_optional=; fi
-			if [ "$line" = "$flag_name_required" ]; then flag_name_required=; fi
-			if [ "$line" = "$flag_name_default" ]; then
-				# We must differentiate between specifying in '{}' (a flag that defaults to empty), and not
-				# specifying '{}'. If '{}' is specified (default empty flag), this variable is unset;
-				# otherwise, if '{}' is not specified at all, the variable is unset. If unset, we expect
-				# the flag to be ONLY a boolean flag, and expect no values to follow it (only more flags)
-				unset flag_name_default
-			fi
-			if [ "$line" = "$flag_description" ]; then flag_description=; fi
+		# Argument specification
+		# --four -f
+		# --four ''
+		# '' -four
 
-			# Sanity checks
-			if [ -z "$flag_name_optional" ] && [ -z "$flag_name_required" ]; then
-				bash_args.util.die 'bash-args: Must specify either an optional or required flag; neither were specified'
-				return
+		if [ -n "$flag_long" ]; then
+			if [[ $flag_long != --?* ]]; then
+				bash_args.print.error "Long flag must start with double hyphens and have something after ($flag_long)"
+				return 1
 			fi
 
-			if [ -n "$flag_name_optional" ] && [ -n "$flag_name_required" ]; then
-				bash_args.util.die 'bash-args: Must specify either an optional or required flag; both were specified'
-				return
-			fi
-
-			# Set 'long_flag' and 'short_flag', using 'flag_name' as an intermediary value so it works
-			# whether the line specifies either an optional or a required argument
-			local flag_name="${flag_name_optional:-"$flag_name_required"}"
-			local long_flag="${flag_name%%.*}"
-			local short_flag="${flag_name##*.}"
-
-			# Like above, we account for the behavior of parameter expansion, ensuring 'short_flag' is empty
-			# if it was not provided (i.e, long_flag was only provided). We do not do this
-			# for 'long_flag' because if it was not provided (i.e., only 'short_flag' was provided), the
-			# dot is still required to be there (to differentiate it from a long flag), so the parameter
-			# expansion is guaranteed to work
-			if [ "$flag_name" = "$short_flag" ]; then short_flag=; fi
-
-			# Append to args_command_boolean_flags, if applicable, to be used later for enduring
-			# a flag is not supposed to have any value specifier following it
-			if [[ ! -v flag_name_default ]]; then
-				if [ -n "$long_flag" ]; then
-					args_command_boolean_flags+=("$long_flag")
+			# --four -f
+			if [ -n "$flag_short" ]; then
+				if [[ $flag_short != -[^-] ]]; then
+					bash_args.print.error "The short flag paired with a long flag must have only one character  ($flag_short)"
+					exit 1
 				fi
 
-				if [ -n "$short_flag" ]; then
-					args_command_boolean_flags+=("$short_flag")
-				fi
-			fi
-
-			# Append to args_all_flags, if applicable, to be used later for ensuring
-			# a particular flag was actually specified in the stdin spec
-			if [ -n "$long_flag" ]; then
-				args_all_flags+=("--$long_flag")
-			fi
-
-			if [ -n "$short_flag" ]; then
-				args_all_flags+=("-$short_flag")
-			fi
-
-			# TODO: rename
-			# Set the 'current_flag' or flags for pretty printing the supplied
-			# flags (short and long) for the current line
-			local current_flag=
-			if [[ -n "$long_flag" && -n "$short_flag" ]]; then
-				current_flag="--$long_flag or -$short_flag"
-			elif [ -n "$long_flag" ]; then
-				current_flag="--$long_flag"
-			elif [ -n "$short_flag" ]; then
-				current_flag="-$short_flag"
-			fi
-
-			# shellcheck disable=SC1007
-			local arg= flag_was_found=no did_immediate_break=no
-			for arg; do
-				if [ "$arg" = "--" ]; then
-					break
-				fi
-
-				if [ "$flag_was_found" = yes ]; then
-					did_immediate_break=yes
-					break
-				fi
-
-				if [ "$arg" = "--$long_flag" ]; then
-					flag_was_found=yes
-				elif [ "$arg" = "-$short_flag" ]; then
-					flag_was_found=yes
-				fi
-			done
-			local flag_value_cli="$arg"
-
-			# Debug
-			if [[ -v DEBUG_BASH_ARGS ]]; then
-				# Ensure the third file descriptor is valid for writing. We use 3 because
-				# it's printed to the terminal when testing with Bats using the TAP formatter
-				if ! : >&3; then
-					exec 3>&1
-				fi 2>/dev/null
-
-				cat >&3 <<-EOF
-				flag_name_optional: $flag_name_optional
-				flag_name_required: $flag_name_required
-				flag_name_default: ${flag_name_default-"NOT SET"}
-				flag_description: $flag_description
-
-				flag_name: $flag_name
-				long_flag: $long_flag
-				short_flag: $short_flag
-
-				args_command_boolean_flags: ${args_command_boolean_flags[@]}
-				args_all_flags: ${args_all_flags[@]}
-				current_flag: $current_flag
-				flag_value_cli: $flag_value_cli
-				EOF
-			fi
-
-			# If the flag name is required, we exit a failure if it's not there
-			if [ -n "$flag_name_required" ]; then
-				# If we did not set flag_was_found=yes, it means it did not find
-				# the flag. So, if the flag is <required>, we fail right away
-				if [ "$flag_was_found" = no ]; then
-					bash_args.util.die "bash-args: You must supply the flag '$current_flag' with a value"
-					return
-				fi
-
-				# If we were supposed to do an immediate break, but didn't actually
-				# do it, it means we are on the last argument and there is no value
-				if [ "$flag_was_found" = yes ] && [ "$did_immediate_break" = no ]; then
-					bash_args.util.die "bash-args: No value found for flag '$current_flag'"
-					return
-				fi
-			fi
-
-			# Set the default for the current flag. If there is no default,
-			# it is just an empty assignment. If flag_name_default is unset,
-			# it means the flag is a boolean so we set the default to 'no'
-			if [[ -v flag_name_default ]]; then
-				if [ -n "$long_flag" ]; then
-					args+=(["$long_flag"]="${flag_name_default:-}")
-				fi
-
-				if [ -n "$short_flag" ]; then
-					args+=(["$short_flag"]="${flag_name_default:-}")
-				fi
+				printf "%s\n" "-- A: $flag_long:$flag_short"
+				_args["${subcmd_prefix}${flag_long}"]="$flag_attrs|$flag_desc"
+				_args["${subcmd_prefix}${flag_short}"]="$flag_attrs|$flag_desc"
+				_args_maplong["${flag_long}"]="$flag_short"
+				_args_mapshort["${flag_short}"]="$flag_long"
+				_args['__order__']+="|${subcmd_prefix}${flag_long}"
+			# --four ''
 			else
-				if [ -n "$long_flag" ]; then
-					args+=(["$long_flag"]=no)
-				fi
-
-				if [ -n "$short_flag" ]; then
-					args+=(["$short_flag"]=no)
-				fi
+				printf "%s\n" "-- B: $flag_long:$flag_short"
+				_args["${subcmd_prefix}${flag_long}"]="$flag_attrs|$flag_desc"
+				_args['__order__']+="|${subcmd_prefix}${flag_long}"
 			fi
-
-			# There is a flag with a possible value
-			# the did_immediate_break check ensures that the value of "$arg" isn't
-			# the same as the last element (which is the flag option itself)
-			if [ "$flag_was_found" = yes ] && [ "$did_immediate_break" = yes ]; then
-				case "$flag_value_cli" in
-					-*)
-						if [[ -v flag_name_default ]]; then
-							bash_args.util.die "bash-args: You must supply a value for '$current_flag'"
-							return
-						fi
-						;;
-					*)
-						# The user-supplied flag is valid, override the default
-						if [[ -v flag_name_default ]]; then
-							if [ -n "$long_flag" ]; then
-								args+=(["$long_flag"]="$flag_value_cli")
-							fi
-
-							if [ -n "$short_flag" ]; then
-								args+=(["$short_flag"]="$flag_value_cli")
-							fi
-						else
-							if [ -n "$long_flag" ]; then
-								args+=(["$long_flag"]=yes)
-							fi
-
-							if [ -n "$short_flag" ]; then
-								args+=(["$short_flag"]=yes)
-							fi
-						fi
-				esac
-			# This is the last element of "$@". It only applies to boolean options
-			elif [ "$flag_was_found" = yes ] && [ "$did_immediate_break" = no ]; then
-				if [ -n "$long_flag" ]; then
-					args+=(["$long_flag"]=yes)
-				fi
-
-				if [ -n "$short_flag" ]; then
-					args+=(["$short_flag"]=yes)
-				fi
-			fi
-
-			# Construct 'argsHelpText'
-
-			# shellcheck disable=SC1007
-			local flag_name_combo= flag_description=
-
-			# Option
-			if [[ -n "$long_flag" && -n "$short_flag" ]]; then
-				flag_name_combo="$short_flag, $long_flag"
-			elif [ -n "$short_flag" ]; then
-				flag_name_combo="$short_flag"
-			elif [ -n "$long_flag" ]; then
-				flag_name_combo="$long_flag"
-			fi
-
-			if [ -n "$flag_name_required" ]; then
-				# flag_name_combo="$flag_name_combo <>"
-
-				if [ -n "$flag_description" ]; then
-					flag_description="(Required) $flag_description"
-				else
-					flag_description="(Required)"
-				fi
-			fi
-
-			if [[ -v flag_name_default ]]; then
-				if [ -n "$flag_description" ]; then
-					flag_description="(Default: $flag_name_default) $flag_description"
-				else
-					flag_description="(Default: $flag_name_default)"
-				fi
-			fi
-
-			# TODO: description can wrap around incorrectly
-			flag_name_combo="  ${flag_name_combo}"
-			if [ "${#flag_name_combo}" -lt 20 ]; then
-				printf -v flag_name_combo '%-20s' "$flag_name_combo"
-				args_help_array_flags+=("${flag_name_combo}$flag_description"$'\n')
-			else
-				args_help_array_flags+=("${flag_name_combo}\n$flag_description"$'\n')
-			fi
-
-		elif [ "$type" = "@arg" ]; then
-			local name="${line#* }"; name="${name%% *}"
-			local argDescription="${line##* - }"
-
-			# for argsHelpText
-			printf -v name '%-20s' "  $name"
-			args_help_array_args+=("${name}${argDescription}"$'\n')
+		# '' -four
 		else
-			bash_args.util.die "bash-args: Pragma must be either @flag or @arg. Received: '$type'"
-			return
-		fi
-	done
-
-	# Construct 'argsCommands'. Note that this ONLY provides accurate results if we check and exit the
-	# program on flags that are not recognized
-	local args_command_mode=append
-	for arg; do
-		if [ "$args_command_mode" = skip ]; then
-			args_command_mode=append
-			continue
-		fi
-
-		case "$arg" in
-			-*)
-				# We only skip the next argument if the current
-				# argument is NOT a boolean argument
-				local should_skip=yes
-				for boolean_arg in "${args_command_boolean_flags[@]}"; do
-					local cut_arg="${arg/#-/}"
-					cut_arg="${cut_arg/#-/}"
-
-					if [ "$boolean_arg" = "$cut_arg" ]; then
-						should_skip=no
-						break
-					fi
-				done
-
-				if [ "$should_skip" = yes ]; then
-					args_command_mode=skip
-				fi
-				;;
-			*)
-				if [ "$args_command_mode" = append ]; then
-					argsCommands+=("$arg")
-				fi
-		esac
-	done
-
-	# use args_all_flags to ensure no invalid arguments
-	for arg; do
-		case "$arg" in
-		-) ;;
-		--) break ;;
-		-*)
-			local is_valid_flag=no
-			for flag in "${args_all_flags[@]}"; do
-				if [ "$flag" = "$arg" ]; then
-					is_valid_flag=yes
-					break
-				fi
-			done
-
-			if [ "$is_valid_flag" = no ]; then
-				bash_args.util.die "bash-args: Flag '$arg' is not accepted"
-				return
+			if [[ $flag_short != -[^-]* ]]; then
+				bash_args.print.error "Short flag must start with single hyphen and have something after  ($flag_short)"
+				return 1
 			fi
-		esac
-	done
 
-	# generate argsHelpText
-	exec_name="${0##*/}"
-	if [ "$exec_name" = "bash" ]; then
-		exec_name="stdin"
-	fi
-
-	# TODO: description can wrap around incorrectly
-	local description_output=
-	if [ -n "${description:-}" ]; then
-		printf -v description_output "\nDescription:\n"
-	fi
-
-	oldIFS="$IFS"
-	IFS=
-	if [ "${#args_help_array_flags[@]}" -gt 0 ]; then
-		printf -v flagOutput "\nFlags:\n%s" "${args_help_array_flags[*]}"
-
-		# Since flagOutput is the last thing to print, strip any hanging newlines
-		if [ "${flagOutput: -1}" = $'\n' ]; then
-			flagOutput="${flagOutput::-1}"
+			printf "%s\n" "-- C: $flag_long:$flag_short"
+			_args["${subcmd_prefix}${flag_short}"]="$flag_attrs|$flag_desc"
+			_args['__order__']+="|${subcmd_prefix}${flag_short}"
 		fi
-	fi
 
-	argument_output=
-	if [ "${#args_help_array_args[@]}" -gt 0 ]; then
-		printf -v argument_output "\nSubcommands:\n%s" "${args_help_array_args[*]}"
-	fi
-
-	IFS="$oldIFS"
-
-	# shellcheck disable=SC2034
-	declare -g argsHelpText="Usage:
-  $exec_name [flags] <arguments>
-${description_output}${argument_output}${flagOutput}"
-
-	unset BASH_ARGS_LIB_DIR
-	unset BASH_ARGS_VERSION
+		i=$((i+4))
+	done; unset -v i arg
 }
+
+barg.parse_flags() {
+	local subcmd_prefix=
+
+	printf '%s\n' '_ARGS'
+	local key= value=
+	for key in "${!_args[@]}"; do
+		value="${_args[$key]}"
+		printf '  %s\n' "$key: $value"
+	done; unset -v key value
+
+	# shellcheck disable=SC1007
+	local i=
+	for ((i=1; i < $# + 1; ++i)); do
+		local ii=$((i+1))
+		local arg="${!i}"
+		local arg_next="${!ii}"
+		unset -v ii
+
+		# shellcheck disable=SC1007
+		local flag_name= flag_value=
+
+		# Arg must either be one of
+		# --color auto
+		# --color=auto
+		# --no-color
+
+		# -color auto
+		# -color=auto
+		# -no-color
+
+		# -r
+		# -rc10
+		# subcmd
+
+		# for a particular point in the hierarchy, if there are child subcommands, only allow
+		# non-flag arguments that match the subcommands. however, if there are no child subcommands,
+		# then add it to the "non flag arguments" array
+
+		# 'flag_name' is similar to 'flag_long' or 'flag_short'
+
+		if [[ $arg == '--'* ]]; then
+			if [[ $arg == *=* ]]; then
+				IFS='=' read -r flag_name flag_value <<< "$arg"
+			else
+				flag_name="$arg"
+
+				if ! bash_args.check_and_attrs "$subcmd_prefix" "$flag_name"; then
+					return 1 # Error already printed
+				fi
+
+				local flag_attrs="${_args[${subcmd_prefix}${flag_name}]}"
+				bash_args.util.parse_attrs "$flag_attrs"
+				local attr_default="$REPLY1"
+				local attr_boolflag="$REPLY2"
+				local attr_type="$REPLY3"
+
+				if ((i == $#)) && [ "$attr_boolflag" = 'no' ]; then
+					echo must pass value
+					exit 1
+				fi
+
+				# Before we get the next value, we check (above) if there is actually a next value
+				flag_value="$arg_next"
+				((++i))
+			fi
+
+			:
+		elif [[ $arg = '-'* ]]; then
+			:
+		else
+			subcmd_prefix+="${arg}__"
+			:
+		fi
+
+	done; unset -v i subcmd flag
+}
+
