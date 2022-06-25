@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://eankeen.github.io/args/</loc>
+         <loc>https://hyperupcall.github.io/bash-args/</loc>
          <lastmod>2022-06-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://eankeen.github.io/args/prior-art/</loc>
+         <loc>https://hyperupcall.github.io/bash-args/prior-art/</loc>
          <lastmod>2022-06-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://eankeen.github.io/args/reference/</loc>
+         <loc>https://hyperupcall.github.io/bash-args/reference/</loc>
          <lastmod>2022-06-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
