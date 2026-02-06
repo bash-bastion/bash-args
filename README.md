@@ -27,8 +27,8 @@ barg.parse_flags "$@"
 
 ## Installation
 
-Use [Basalt](https://github.com/hyperupcall/basalt), a Bash package manager, to add this project as a dependency
+Use [Basalt](https://github.com/bash-bastion/basalt), a Bash package manager, to add this project as a dependency
 
 ```sh
-basalt add hyperupcall/bash-args
+basalt add bash-bastion/bash-args
 ```
