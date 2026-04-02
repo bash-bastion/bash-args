@@ -121,7 +121,7 @@ load './util/init.sh'
 	)
 }
 
-@test "properly fail if value contains hypthens" {
+@test "properly fail if value contains hyphens" {
 	declare -A args=()
 
 	! (
